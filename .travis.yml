@@ -1,0 +1,8 @@
+language: generic
+
+services:
+  - docker
+
+script:
+  - docker-compose build
+# - docker build -t dhbw-stginf16a/silly-monkey-trigger-router trigger-router/.
