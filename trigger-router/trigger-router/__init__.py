@@ -8,7 +8,10 @@ app = Flask(__name__)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return jsonify({"error": "page not found"}), 404
+    return jsonify({
+            "error": "Page not found",
+            "details": "Tried to access {}".format(request.path)
+        }),404
 
 
 @app.route("/trigger")

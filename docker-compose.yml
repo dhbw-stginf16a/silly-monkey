@@ -1,0 +1,16 @@
+version: '3'
+services:
+  reverse-proxy: 
+    image: abiosoft/caddy:latest
+    volumes:
+      - ./infrastructure/Caddyfile:/etc/Caddyfile
+    ports:
+      - 80:80
+      - 443:443
+      - 2015:2015
+    links:
+      - trigger-router
+  trigger-router:
+    build: ./trigger-router
+    expose:
+      - "5000"

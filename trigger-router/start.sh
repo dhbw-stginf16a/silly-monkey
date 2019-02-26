@@ -5,4 +5,4 @@ then
 else
     source venv/bin/activate
 fi
-flask run --host=0.0.0.0
+flask run --host=0.0.0.0 --port=5000
