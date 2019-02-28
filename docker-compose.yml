@@ -10,7 +10,12 @@ services:
       - 2015:2015
     links:
       - trigger-router
+      - feinstaub-adapter
   trigger-router:
     build: ./trigger-router
     expose:
       - "5000"
+  feinstaub-adapter:
+    build: ./feinstaub-adapter
+    expose:
+      - "5001"
