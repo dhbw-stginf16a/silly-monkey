@@ -1,8 +1,18 @@
 language: generic
-
 services:
   - docker
-
 script:
-  - docker-compose build
-# - docker build -t dhbw-stginf16a/silly-monkey-trigger-router trigger-router/.
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t sm-trigger-router trigger-router/.
+  - docker tag sm-trigger-router johnazoidberg/sm-trigger-router
+  - docker push johnazoidberg/sm-trigger-router
+  - docker build -t sm-feinstaub-adapter feinstaub-adapter/.
+  - docker tag sm-feinstaub-adapter johnazoidberg/sm-feinstaub-adapter
+  - docker push johnazoidberg/sm-feinstaub-adapter
+  - docker build -t sm-calendar-adapter calendar-adapter/.
+  - docker tag sm-calendar-adapter johnazoidberg/sm-calendar-adapter
+  - docker push johnazoidberg/sm-calendar-adapter
+env:
+  global:
+  - secure: lBsJaI6EUq+lk6ByttG71RAOgzXpT3GvXpeD05OEDJwOFJw+BjlgmLA/Jeh6lRv7BZOJR5NGGk/tjsdMeN86M8+SLVkp7n5nW8Nhir66T2JvEWMQ3yfvGWv+UWaNVM0Oe/nsf9K2mMXlUKGmNPty1D+2q7D1kw3QXIQo6+IMSVo0e0jJgN1sBbgKFswohfbosBmlATBGayxYHxGYg+JFao3duPC183kt2Ar2iMTdkzKCITK07AbLH/gCBgxKnNHhz5ivpPzetQc9+IzdZY3Pi8dWMo/4PeKKap8mW6JHBgIR4BwwfI8iVnuZ63oKrw9OueXA1ikVNOZW3S2WOsIBf2AQJpf4MPHpceYhCohgkTFfiao9i4xhrkmGpCrbgKgjKUvKQUn8Gl50bcYaj228owZpQ3xDChb4w08SzS92BfgsdbxGQLE66ZbZ6lualfd1IwrtKdFq5Jv/L1njubiJXXdCdxzBA+nthI7NjfT2d5H2t3PVeiq5q3A9u1UE/LArPDlzLGTqj6bcT3Cp3X8hEiC+nOciSvtrjhrM2a6Mr3XNfQHBDqZ1HDcCzT3JGnjMLGISkUo8u7/dVf3oAQaAHYay4LmV/rFI83yR+6/BVuH9FvdjC7UTyyc62bpNYC57DWxhOhME2MegrN+FHM46CZAiqJMQYJdNdC5MtCJ/CfQ=
+  - DOCKER_USERNAME: johnazoidberg
