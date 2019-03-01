@@ -5,7 +5,7 @@ var graph = require('@microsoft/microsoft-graph-client');
 
 /* GET /calendar */
 router.get('/', async function(req, res, next) {
-  let parms = { title: 'Calender', active: { calendar: true } };
+  let parms = { title: 'Calendar', active: { calendar: true } };
 
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
   const userName = req.cookies.graph_user_name;
@@ -35,7 +35,7 @@ router.get('/', async function(req, res, next) {
       .get();
 
       parms.events = result.value;
-      res.render('calender', parms);
+      res.render('calendar', parms);
     } catch (err) {
       parms.message = 'Error retrieving events';
       parms.error = { status: `${err.code}: ${err.message}` };
