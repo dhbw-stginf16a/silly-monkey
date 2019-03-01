@@ -19,3 +19,7 @@ services:
     build: ./feinstaub-adapter
     expose:
       - "5001"
+   calender-adapter:
+    build: ./calender-adapter
+    expose:
+      - "5002"
