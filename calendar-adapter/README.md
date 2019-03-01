@@ -2,7 +2,7 @@ example return object route calender-adapter/calender/todaysAppointments
 
 { title: 'Calendar',
   active: { calendar: true },
-  user: 'Schaefer, Alexandra',
+  user: 'Lastname, Firstname',
   events:
    [ { '@odata.etag': 'W/" "',
         id: 'someCalenderEntryId',
