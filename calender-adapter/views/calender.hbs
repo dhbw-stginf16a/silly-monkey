@@ -4,7 +4,7 @@
     <th scope="col">Subject</th>
     <th scope="col">Start</th>
     <th scope="col">End</th>
-    <th scope="col">Attendees</th>
+    <th scope="col">Location</th>
   </thead>
   <tbody>
     {{#each events}}
@@ -12,6 +12,7 @@
         <td>{{this.subject}}</td>
         <td>{{this.start.dateTime}} ({{this.start.timeZone}})</td>
         <td>{{this.end.dateTime}} ({{this.end.timeZone}})</td>
+        <td>{{this.location.displayName}}</td>
         <!--<td>
           <ul class="list-unstyled">
             {{#each this.attendees}}

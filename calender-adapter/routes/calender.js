@@ -30,11 +30,12 @@ router.get('/', async function(req, res, next) {
       const result = await client
       .api(`/me/calendarView?startDateTime=${start.toISOString()}&endDateTime=${end.toISOString()}`)
       .top(10)
-      .select('subject,start,end')
+      .select('subject,start,end,location')
       .orderby('start/dateTime DESC')
       .get();
 
       parms.events = result.value;
+      console.log(parms.events);
       res.render('calender', parms);
     } catch (err) {
       parms.message = 'Error retrieving events';
