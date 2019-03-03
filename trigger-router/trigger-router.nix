@@ -6,7 +6,10 @@ python3Packages.buildPythonApplication {
   src = ./.;
 
   propagatedBuildInputs = with python3Packages; [
-    flask requests
+    flask
+    requests
+    psycopg2 flask_sqlalchemy
+    marshmallow
   ];
 
   meta = with stdenv.lib; {

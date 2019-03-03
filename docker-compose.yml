@@ -1,6 +1,14 @@
 version: '3'
 services:
-  reverse-proxy: 
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: chei1eixoo5Bohku
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+  reverse-proxy:
     image: abiosoft/caddy:latest
     volumes:
       - ./infrastructure/Caddyfile:/etc/Caddyfile
@@ -26,3 +34,6 @@ services:
    image: johnazoidberg/sm-calendar-adapter
    expose:
      - 5002
+volumes:
+  db-data:
+    driver: local
