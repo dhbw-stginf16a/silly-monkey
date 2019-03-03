@@ -13,13 +13,16 @@ services:
       - feinstaub-adapter
   trigger-router:
     build: ./trigger-router
+    image: johnazoidberg/sm-trigger-router
     expose:
-      - "5000"
+      - 5000
   feinstaub-adapter:
     build: ./feinstaub-adapter
+    image: johnazoidberg/sm-feinstaub-adapter
     expose:
-      - "5001"
-   calender-adapter:
-    build: ./calender-adapter
-    expose:
-      - "5002"
+      - 5001
+  calendar-adapter:
+   build: ./calendar-adapter
+   image: johnazoidberg/sm-calendar-adapter
+   expose:
+     - 5002
