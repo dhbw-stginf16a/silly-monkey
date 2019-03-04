@@ -37,4 +37,14 @@ router.get('/signout', function(req, res, next) {
   res.redirect('/');
 });
 
+  /* GET /authorize/signout */
+  router.get('/getToken', async function(req, res, next) {
+    var token = await authHelper.getAccessToken(res);
+  
+    // Redirect to home
+    res.send(token);
+  });
+
+  
+
 module.exports = router;
