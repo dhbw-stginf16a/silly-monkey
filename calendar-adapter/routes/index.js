@@ -22,7 +22,7 @@ router.get('/', async function(req, res, next) {
     parms.debug = parms.signInUrl;
   }
 
-  res.render('index', parms);
+  res.send(parms);
 });
 
 module.exports = router;

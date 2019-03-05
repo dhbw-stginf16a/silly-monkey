@@ -70,6 +70,10 @@ async function getAccessToken(res) {
   return null;
 }
 
+function setAccessToken(token) {
+  sessionToken = token;
+}
+
 exports.getAccessToken = getAccessToken;
 
 exports.getTokenFromCode = getTokenFromCode;
