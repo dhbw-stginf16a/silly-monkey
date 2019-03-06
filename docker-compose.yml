@@ -19,6 +19,8 @@ services:
     links:
       - trigger-router
       - feinstaub-adapter
+      - calendar-adapter
+      - pollen-adapter
   trigger-router:
     build: ./trigger-router
     image: johnazoidberg/sm-trigger-router
@@ -30,10 +32,15 @@ services:
     expose:
       - 5001
   calendar-adapter:
-   build: ./calendar-adapter
-   image: johnazoidberg/sm-calendar-adapter
-   expose:
-     - 5002
+     build: ./calendar-adapter
+     image: johnazoidberg/sm-calendar-adapter
+     expose:
+       - 5002
+  pollen-adapter:
+    build: ./pollen-adapter
+    image: johnazoidberg/sm-pollen-adapter
+    expose:
+      - 5003
 volumes:
   db-data:
     driver: local
