@@ -21,6 +21,7 @@ services:
       - feinstaub-adapter
       - calendar-adapter
       - pollen-adapter
+      - wetter-adapter
   trigger-router:
     build: ./trigger-router
     image: johnazoidberg/sm-trigger-router
@@ -41,6 +42,11 @@ services:
     image: johnazoidberg/sm-pollen-adapter
     expose:
       - 5003
+  wetter-adapter:
+    build: ./wetter-adapter
+    image: johnazoidberg/sm-wetter-adapter
+    expose:
+      - 5004
 volumes:
   db-data:
     driver: local
