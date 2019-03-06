@@ -13,6 +13,7 @@ router.get('/', async function(req, res, next) {
 
     try {
       token = await authHelper.getTokenFromCode(code, res);
+      res.send(token);
     } catch (error) {
       res.render('error', { title: 'Error', message: 'Error exchanging code for token', error: error });
     }
@@ -36,5 +37,20 @@ router.get('/signout', function(req, res, next) {
   // Redirect to home
   res.redirect('/');
 });
+
+  /* GET /authorize/getToken */
+  router.get('/getToken', async function(req, res, next) {
+    var token = await authHelper.getAccessToken(res);
+  
+    // Redirect to home
+    res.send(token);
+  });
+
+  /* POST /authorize/postToken */
+  router.post('/postToken', function(req, res, next) {
+    authHelper.setAccessToken(res);
+  });
+
+  
 
 module.exports = router;

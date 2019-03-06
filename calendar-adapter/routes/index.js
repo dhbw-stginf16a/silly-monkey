@@ -5,9 +5,14 @@ var authHelper = require('../helper/auth');
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   let parms = { title: 'Home', active: { home: true } };
+  var accessToken = "";
+  var userName = "";
 
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
-  const userName = req.cookies.graph_user_name;
+  const sessionToken = await authHelper.getAccessToken(res);
+  if(sessionToken) {
+    accessToken = sessionToken.access_token;
+    userName = sessionToken.user.name;
+  }
 
   if (accessToken && userName) {
     parms.user = userName;
@@ -17,7 +22,7 @@ router.get('/', async function(req, res, next) {
     parms.debug = parms.signInUrl;
   }
 
-  res.render('index', parms);
+  res.send(parms);
 });
 
 module.exports = router;
