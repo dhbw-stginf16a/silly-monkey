@@ -1,0 +1,19 @@
+{
+  "name": "goodmorning-usecase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "usecase",
+    "goodMorning"
+  ],
+  "author": "alex",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "proxy": "silly-monkey.danielschaefer.me/triggerRouter/trigger:5000"
+}
