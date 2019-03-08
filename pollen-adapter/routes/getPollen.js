@@ -4,6 +4,21 @@ const util = require('../util/util.js')
 
 let router = express.Router();
 
+// example answer
+    /* result = {
+        'Hasel': {
+            'today': 0,
+            'tomorrow': 1,
+            'dayafter_to': 1,
+        },
+        'Erle': {
+            'today': 2,
+            'tomorrow': 2.5,
+            'dayafter-to': 1,
+        },
+    }
+    */
+
 router.get('/', (req, res) => {
     const pollen = req.query.pollen.split(', ');
     const place = req.query.place;
@@ -44,22 +59,6 @@ router.get('/', (req, res) => {
         }).on("error", (err) => {
         console.log("Error: " + err.message);
     });
-
-    // send mock-up answer
-    result = {
-        'Hasel': {
-            'today': 0,
-            'tomorrow': 1,
-            'dayafter_to': 1,
-        },
-        'Erle': {
-            'today': 2,
-            'tomorrow': 2.5,
-            'dayafter-to': 1,
-        },
-    }
-
-    res.send(result);
 });
 
 module.exports = router;
