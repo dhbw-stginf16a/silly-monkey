@@ -35,7 +35,12 @@ async function getTokenFromCode(auth_code, res) {
 
   // Parse the identity token
   const user = jwt.decode(token.token.id_token);
+
+  
+  var userNameArr = user.name.split(',');
+  user.name = userNameArr[1] + " " +  userNameArr[0];
   token.token.user = user;
+
   console.log('Token created: ', token.token);
 
   sessionToken = token.token;

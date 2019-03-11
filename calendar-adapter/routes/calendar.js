@@ -57,9 +57,14 @@ router.get('/', async function(req, res, next) {
 /* GET /calendar */
 router.get('/todaysAppointments', async function(req, res, next) {
   let parms = { title: 'Calendar', active: { calendar: true } };
+  var accessToken = "";
+  var userName = "";
 
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
-  const userName = req.cookies.graph_user_name;
+  const sessionToken = await authHelper.getAccessToken(res);
+  if(sessionToken) {
+    accessToken = sessionToken.access_token;
+    userName = sessionToken.user.name;
+  }
 
   if (accessToken && userName) {
     parms.user = userName;
@@ -85,8 +90,22 @@ router.get('/todaysAppointments', async function(req, res, next) {
       .orderby('start/dateTime DESC')
       .get();
 
-      parms.events = result.value;
-      console.log(parms.events);
+      var calenderEvents = result.value;
+      var events = [];
+
+      for (let calenderEvent of calenderEvents) {
+        var event = {};
+        event.subject = calenderEvent.subject;
+        event.start = calenderEvent.start.dateTime;
+        event.end = calenderEvent.end.dateTime;
+        event.location = calenderEvent.location.displayName;
+        console.log(event);
+        events.push(event);
+      }
+
+      console.log(events);
+
+      parms.events = events;
       res.send(parms);
     } catch (err) {
       parms.message = 'Error retrieving events';
