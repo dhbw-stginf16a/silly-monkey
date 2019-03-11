@@ -10,24 +10,34 @@ const calenderAdapter = "";
 const feinstaubAdapter = "http://localhost:5001/isAlarm";
 const weatherAdapter = "http://localhost:5004/getWeather";
 
-
 app.get('/personalTrainer', async (req, res) => {
   try {
     // const dbResponse = await axios(dbConnectionViaTriggerRouter);
     // const calenderResponse = await axios(calenderAdapter);
     const feinstaubResponse = await axios(feinstaubAdapter);
-     const weatherResponse = await axios(weatherAdapter);
-    // dayTime aus DB
-    
-    //var userName = dbResponse.data.indexOf("userName");
+    const weatherResponse = await axios(weatherAdapter);
+    // let time = dayTimeDescription();
+
+   /*  let date = new Date();
+    let hour = date.getHours();
+    function dayTimeDescription() {
+        if(hour < 12) {
+            time = "morning";
+        } else time = "evening";
+    }  */
 
     let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
-    let temperature = weatherResponse.data.temp;
+    let temperature = weatherResponse.data.main.temp;
+    let weather = weatherResponse.data.weather[0].main;
 
     let result = {
         isfeinstaub: isFeinstaubAlarm,
-        temp: temperature
+        temp: temperature,
+        weatherDescription: weather
+        //dayTime: time
     };
+    
+    console.log(result);
     res.send(result);
 
   } catch (error) {
