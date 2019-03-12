@@ -1,0 +1,39 @@
+    <ontology base="http://localhost:8080/resources/ontology-1.0.xml">
+        <intents>
+            <intent name="getWeather">
+                <links>
+                    <link conceptref="location"/>
+                    <link conceptref="timeReference"/>
+                </links>
+            </intent>
+        </intents>
+        <concepts>
+            <concept name="timeReference"/>
+            <concept name="location"/>
+        </concepts>
+    </ontology>
+    <dictionaries>
+        <dictionary conceptref="timeReference">
+            <entry literal="in two days" value="in two days"/>
+            <entry literal="next week" value="next week"/>
+            <entry literal="now" value="now"/>
+            <entry literal="right now" value="right now"/>
+            <entry literal="tomorrow" value="tomorrow"/>
+        </dictionary>
+        <dictionary conceptref="location">
+            <entry literal="Berlin" value="Berlin"/>
+            <entry literal="Frankfurt" value="Frankfurt"/>
+            <entry literal="Munich" value="Munich"/>
+            <entry literal="Stuttgart" value="Stuttgart"/>
+        </dictionary>
+    </dictionaries>
+    <samples>
+        <sample intentref="getWeather" count="1">What is the weather<annotation conceptref="timeReference">tomorrow</annotation>
+        </sample>
+        <sample intentref="getWeather" count="1">How will the weather be<annotation conceptref="timeReference">tomorrow</annotation>in<annotation conceptref="location">Stuttgart</annotation>
+        </sample>
+        <sample intentref="getWeather" count="1">What weather is it in<annotation conceptref="location">Stuttgart</annotation>
+        </sample>
+        <sample intentref="getWeather" count="1">What is the weather for<annotation conceptref="location">Stuttgart</annotation>
+        </sample>
+    </samples>
