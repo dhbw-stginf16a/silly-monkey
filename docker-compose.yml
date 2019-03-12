@@ -48,6 +48,21 @@ services:
     image: johnazoidberg/sm-wetter-adapter
     expose:
       - 5004
+  verkehr-adapter:
+    build: ./verkehr-adapter
+    image: johnazoidberg/sm-verkehr-adapter
+    expose:
+      - 5005
+  goodmorning-usecase:
+    build: ./goodmorning-usecase
+    image: johnazoidberg/sm-goodmorning-usecase
+    expose:
+      - 5010
+  personalTrainer-usecase:
+    build: ./personalTrainer-usecase
+    image: johnazoidberg/sm-personalTrainer-usecase
+    expose:
+      - 5011
 volumes:
   db-data:
     driver: local
