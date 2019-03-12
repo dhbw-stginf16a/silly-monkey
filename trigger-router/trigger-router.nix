@@ -8,8 +8,7 @@ python3Packages.buildPythonApplication {
   propagatedBuildInputs = with python3Packages; [
     flask
     requests
-    psycopg2 flask_sqlalchemy
-    marshmallow
+    redis
   ];
 
   meta = with stdenv.lib; {

@@ -1,13 +1,14 @@
 version: '3'
 services:
   database:
-    image: postgres:latest
+    image: redis:5
     environment:
       POSTGRES_PASSWORD: chei1eixoo5Bohku
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/data
+#     - ./infrastructure/redis.conf:/usr/local/etc/redis/redis.conf
     expose:
-      - 5432
+      - 6379
   reverse-proxy:
     image: abiosoft/caddy:latest
     volumes:
