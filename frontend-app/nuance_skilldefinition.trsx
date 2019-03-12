@@ -6,6 +6,7 @@
                     <link conceptref="timeReference"/>
                 </links>
             </intent>
+            <intent name="getWelcome"></intent>
         </intents>
         <concepts>
             <concept name="timeReference"/>
@@ -36,4 +37,10 @@
         </sample>
         <sample intentref="getWeather" count="1">What is the weather for<annotation conceptref="location">Stuttgart</annotation>
         </sample>
+        <sample intentref="getWelcome" count="1">Good morning, Jarvis!
+        </sample>
+        <sample intentref="getWelcome" count="1">What's my day like?
+        </sample>
+        <sample intentref="getWelcome" count="1">Update me, Jarvis
+    </sample>
     </samples>
