@@ -5,17 +5,20 @@ const router = express.Router();
 
 const port = 5011
 
-const dbConnectionViaTriggerRouter = "";
-const calenderAdapter = "";
-const feinstaubAdapter = "http://localhost:5001/isAlarm";
-const weatherAdapter = "http://localhost:5004/getWeather";
+const dbConnectionViaTriggerRouter = "http://trigger-router:5000/database";
+const calenderAdapter = "http://calendar-adatper:5002/";
+const feinstaubAdapter = "http://feinstaub-adapter:5001/isAlarm";
+const weatherAdapter = "http://weather-adapter:5004/getWeather";
 
-app.get('/personalTrainer', async (req, res) => {
+app.get('/whatTraining', async (req, res) => {
   try {
-    // const dbResponse = await axios(dbConnectionViaTriggerRouter);
+    // TODO: Check if returned nothing
+    const location = await axios(dbConnectionViaTriggerRouter + "/location");
+    console.log(location.data);
     // const calenderResponse = await axios(calenderAdapter);
-    const feinstaubResponse = await axios(feinstaubAdapter);
-    const weatherResponse = await axios(weatherAdapter);
+    const feinstaubResponse = await axios(feinstaubAdapter + "?location=" + location);
+    console.log(feinstaubResponse.data);
+    //const weatherResponse = await axios(weatherAdapter);
     // let time = dayTimeDescription();
 
    /*  let date = new Date();
@@ -27,18 +30,25 @@ app.get('/personalTrainer', async (req, res) => {
     }  */
 
     let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
-    let temperature = weatherResponse.data.main.temp;
-    let weather = weatherResponse.data.weather[0].main;
+    //let temperature = weatherResponse.data.main.temp;
+    //let weather = weatherResponse.data.weather[0].main;
 
-    let result = {
-        isfeinstaub: isFeinstaubAlarm,
-        temp: temperature,
-        weatherDescription: weather
-        //dayTime: time
-    };
+    //let result = {
+    //    isfeinstaub: isFeinstaubAlarm,
+    //    temp: temperature,
+    //    weatherDescription: weather
+    //    //dayTime: time
+    //};
     
-    console.log(result);
-    res.send(result);
+    let answer = "I'm not quite sure";
+    if (isFeinstaubAlarm) {
+        answer = "Better stay inside!";
+    } else {
+        answer = "Do something outside";
+    }
+
+    console.log(answer);
+    res.send({ "answer": answer});
 
   } catch (error) {
     console.log(error)

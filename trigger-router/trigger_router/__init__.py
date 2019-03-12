@@ -3,7 +3,7 @@ import json
 from flask import Flask, request, jsonify
 import redis
 
-from .callers import callHomeOffice
+from .callers import callHomeOffice, callPersonalTrainer
 
 
 app = Flask(__name__)
@@ -17,8 +17,8 @@ def page_not_found(e):
         }), 404
 
 
-@app.route("/trigger")
-def genericTrigger(methods=["POST"]):
+@app.route("/trigger", methods=["POST"])
+def genericTrigger():
     try:
         jsonRequest = request.get_json()
         trigger = jsonRequest["trigger"]["type"]
@@ -27,7 +27,9 @@ def genericTrigger(methods=["POST"]):
         return jsonify({"error": "Wrong request body!"}), 400
 
     if trigger == "HomeOffice":
-        return callHomeOffice()
+        return callHomeOffice(parameters)
+    elif trigger == "PersonalTrainer":
+        return callPersonalTrainer(parameters)
     else:
         return "Trigger '{}' was triggered, but we don't know how to handle it!".format(trigger)
 

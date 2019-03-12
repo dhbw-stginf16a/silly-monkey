@@ -2,7 +2,7 @@ let express = require('express');
 
 let router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/getWeather', (req, res) => {
     const time = req.time;
     const location = req.location;
 
