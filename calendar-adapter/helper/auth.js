@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const axios = require("axios");
+
+const dbConnectionViaTriggerRouter = "triggerRouter/database/calenderAccess";
 
 const credentials = {
   client: {
@@ -12,8 +15,6 @@ const credentials = {
   }
 };
 const oauth2 = require('simple-oauth2').create(credentials);
-
-var sessionToken = {};
 
 function getAuthUrl() {
   const returnVal = oauth2.authorizationCode.authorizeURL({
@@ -43,19 +44,19 @@ async function getTokenFromCode(auth_code, res) {
 
   console.log('Token created: ', token.token);
 
-  sessionToken = token.token;
-  return sessionToken;
+  setAccessToken(token.token);
+  return  token.token;
 }
 
 async function getAccessToken(res) {
   // Do we have an access token cached?
-  let token = sessionToken;
+  const dbAccessTokenResponse = await axios(calenderAdapter);
 
   if (token) {
     // We have a token, but is it expired?
     // Expire 5 minutes early to account for clock differences
     const FIVE_MINUTES = 300000;
-    const expiration = new Date(parseFloat(sessionToken.expires_at - FIVE_MINUTES));
+    const expiration = new Date(parseFloat(dbAccessTokenResponse.expires_at - FIVE_MINUTES));
     if (expiration > new Date()) {
       // Token is still good, just return it
       return token;
@@ -64,10 +65,10 @@ async function getAccessToken(res) {
 
   // Either no token or it's expired, do we have a
   // refresh token?
-  const refresh_token = sessionToken.refresh_token;
+  const refresh_token = dbAccessTokenResponse.refresh_token;
   if (refresh_token) {
     const newToken = await oauth2.accessToken.create({refresh_token: refresh_token}).refresh();
-    sessionToken = newToken;
+    setAccessToken(newToken.token);
     return newToken.token.access_token;
   }
 
@@ -76,7 +77,14 @@ async function getAccessToken(res) {
 }
 
 function setAccessToken(token) {
-  sessionToken = token;
+  axios.post(dbConnectionViaTriggerRouter, token)
+    .then((res) => {
+      console.log(`statusCode: ${res.statusCode}`)
+      console.log(res)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
 }
 
 exports.getAccessToken = getAccessToken;
