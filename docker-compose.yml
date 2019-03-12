@@ -58,9 +58,9 @@ services:
     image: johnazoidberg/sm-goodmorning-usecase
     expose:
       - 5010
-  personalTrainer-usecase:
-    build: ./personalTrainer-usecase
-    image: johnazoidberg/sm-personalTrainer-usecase
+  personaltrainer-usecase:
+    build: ./personaltrainer-usecase
+    image: johnazoidberg/sm-personaltrainer-usecase
     expose:
       - 5011
 volumes:
