@@ -14,4 +14,4 @@ RUN chown -R personaltrainer-usecase:personaltrainer-usecase ./
 USER personaltrainer-usecase
 
 EXPOSE 5011
-CMD ["./start.sh"]
+CMD [ "npm" "start" ]

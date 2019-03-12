@@ -14,4 +14,4 @@ RUN chown -R pollen-adapter:pollen-adapter ./
 USER pollen-adapter
 
 EXPOSE 5003
-CMD ["./start.sh"]
+CMD [ "npm" "start" ]

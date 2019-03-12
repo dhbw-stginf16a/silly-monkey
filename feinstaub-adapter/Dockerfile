@@ -14,4 +14,4 @@ RUN chown -R feinstaub-adapter:feinstaub-adapter ./
 USER feinstaub-adapter
 
 EXPOSE 5001
-CMD ["./start.sh"]
+CMD [ "npm" "start" ]

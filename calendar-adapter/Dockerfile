@@ -14,4 +14,4 @@ RUN chown -R calendar-adapter:calendar-adapter ./
 USER calendar-adapter
 
 EXPOSE 5002
-CMD ["./start.sh"]
+CMD [ "npm", "start" ]

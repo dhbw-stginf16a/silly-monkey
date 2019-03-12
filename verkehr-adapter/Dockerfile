@@ -14,4 +14,4 @@ RUN chown -R verkehr-adapter:verkehr-adapter ./
 USER verkehr-adapter
 
 EXPOSE 5005
-CMD ["./start.sh"]
+CMD [ "npm" "start" ]
