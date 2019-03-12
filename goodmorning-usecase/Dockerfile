@@ -14,4 +14,4 @@ RUN chown -R goodmorning-usecase:goodmorning-usecase ./
 USER goodmorning-usecase
 
 EXPOSE 5010
-CMD [ "npm" "start" ]
+CMD [ "npm", "start" ]

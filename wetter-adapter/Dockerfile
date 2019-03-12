@@ -14,4 +14,4 @@ RUN chown -R wetter-adapter:wetter-adapter ./
 USER wetter-adapter
 
 EXPOSE 5004
-CMD [ "npm" "start" ]
+CMD [ "npm", "start" ]
