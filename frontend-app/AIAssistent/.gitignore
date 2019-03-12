@@ -11,3 +11,6 @@
 /build
 /captures
 .externalNativeBuild
+
+# Don't allow unencrypted configuration with API keys
+/app/src/main/java/com/example/aiassistent/Configuration.java
