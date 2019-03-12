@@ -3,18 +3,23 @@
             <intent name="getWeather">
                 <links>
                     <link conceptref="location"/>
-                    <link conceptref="timeReference"/>
+                    <link conceptref="time_reference"/>
                 </links>
             </intent>
             <intent name="getWelcome"></intent>
+            <intent name="getPersonalTrainer">
+                <links>
+                    <link conceptref="time_reference"/>
+                </links>
+            </intent>
         </intents>
         <concepts>
-            <concept name="timeReference"/>
+            <concept name="time_reference"/>
             <concept name="location"/>
         </concepts>
     </ontology>
     <dictionaries>
-        <dictionary conceptref="timeReference">
+        <dictionary conceptref="time_reference">
             <entry literal="in two days" value="in two days"/>
             <entry literal="next week" value="next week"/>
             <entry literal="now" value="now"/>
@@ -29,9 +34,9 @@
         </dictionary>
     </dictionaries>
     <samples>
-        <sample intentref="getWeather" count="1">What is the weather<annotation conceptref="timeReference">tomorrow</annotation>
+        <sample intentref="getWeather" count="1">What is the weather<annotation conceptref="time_reference">tomorrow</annotation>
         </sample>
-        <sample intentref="getWeather" count="1">How will the weather be<annotation conceptref="timeReference">tomorrow</annotation>in<annotation conceptref="location">Stuttgart</annotation>
+        <sample intentref="getWeather" count="1">How will the weather be<annotation conceptref="time_reference">tomorrow</annotation>in<annotation conceptref="location">Stuttgart</annotation>
         </sample>
         <sample intentref="getWeather" count="1">What weather is it in<annotation conceptref="location">Stuttgart</annotation>
         </sample>
@@ -42,5 +47,28 @@
         <sample intentref="getWelcome" count="1">What's my day like?
         </sample>
         <sample intentref="getWelcome" count="1">Update me, Jarvis
-    </sample>
+        </sample>
+        
+        <sample intentref="getPersonalTrainer" count="1">XXXX
+        </sample>
+        <annotation conceptref="time_reference">now</annotation>
+        
+        <sample intentref="getPersonalTrainer" count="1">Is<annotation conceptref="time_reference">now</annotation>a good day for a workout?
+        </sample>        
+        <sample intentref="getPersonalTrainer" count="1">Is<annotation conceptref="time_reference">now</annotation> a good day for a exercise?
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Is <annotation conceptref="time_reference">now</annotation> a good day to go out for a run?
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Shall I work out<annotation conceptref="time_reference">now</annotation>
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Shall I do exercises<annotation conceptref="time_reference">now</annotation>
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Shall I go for a run<annotation conceptref="time_reference">now</annotation>
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Do you recommend to work out<annotation conceptref="time_reference">now</annotation>
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Do you recommend to do exercises<annotation conceptref="time_reference">now</annotation>
+        </sample>
+        <sample intentref="getPersonalTrainer" count="1">Do you recommend to go for a run<annotation conceptref="time_reference">now</annotation>
+        </sample>
     </samples>
