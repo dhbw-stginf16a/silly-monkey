@@ -8,8 +8,7 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 RUN npm install
 
-COPY start.sh start.sh
-COPY index.js index.js
+COPY . .
 
 RUN chown -R feinstaub-adapter:feinstaub-adapter ./
 USER feinstaub-adapter
