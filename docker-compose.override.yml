@@ -1,0 +1,26 @@
+version: '3'
+services:
+  trigger-router:
+    ports:
+      - 5000:5000
+  feinstaub-adapter:
+    ports:
+      - 5001:5001
+  calendar-adapter:
+     ports:
+      - 5002:5002
+  pollen-adapter:
+    ports:
+      - 5003:5003
+  wetter-adapter:
+    ports:
+      - 5004:5004
+  verkehr-adapter:
+    ports:
+      - 5005:5005
+  goodmorning-usecase:
+    ports:
+      - 5010:5010
+  personaltrainer-usecase:
+    ports:
+      - 5011:5011
