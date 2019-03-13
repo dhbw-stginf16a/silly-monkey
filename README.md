@@ -17,9 +17,9 @@ I aliased `docker-compose` to `dc` and I recommend you to do the same because yo
 | Description                        | Command                           |
 | ---------------------------------- | --------------------------------- |
 | Pull everything                    | `dc pull`                         |
-| Building everything                | `dc -d build`                     |
-| Start everything                   | `dc -d up`                        |
-| Rebuild and start everything       | `dc -d up --build`                |
+| Building everything                | `dc build`                        |
+| Start everything                   | `dc up -d`                        |
+| Rebuild and start everything       | `dc up -d --build`                |
 | View running containers            | `dc ps`                           |
 | Stop everything                    | `dc down`                         |
 |                                    |                                   |
