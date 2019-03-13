@@ -21,27 +21,13 @@ def genericTrigger():
     with open("database-defaults.json", "r") as f:
         defaultSettings = json.load(f)
 
-    if request.method == "GET":
-        settings = {}
-        fullySetup = True
-        unset = []
-
-        for key in defaultSettings:
-            r = requests.get("http://trigger-router:5000/database/{}".format(key))
-            if r.status_code == 404:
-                fullySetup = False
-                unset.append(key)
-            else:
-                res = r.json()
-                settings[key] = res["database-entry"][key]
-
-        return jsonify({
-            "setup": settings,
-            "fullySetup": fullySetup,
-            "unset": unset
-        })
-    elif request.method == "POST":
+    if request.method == "POST":
         requestJson = request.get_json()
+
+        if not requestJson or not "setup" in requestJson:
+            return jsonify({
+                "error": "If you want to POST you need to provide some content"
+            }), 400
 
         for key, val in requestJson["setup"].items():
             if not key in defaultSettings:
@@ -52,12 +38,29 @@ def genericTrigger():
             requests.post("http://trigger-router:5000/database/{}".format(key), json={
                 "value": val
             })
+
     elif request.method == "DELETE":
         for key in defaultSettings:
             requests.delete("http://trigger-router:5000/database/{}".format(key))
-            return jsonify({
-                "status": "Deleted all setttings"
-            })
-        pass
     else:
         pass  # Cannot happen
+
+    # GET
+    settings = {}
+    fullySetup = True
+    unset = []
+
+    for key in defaultSettings:
+        r = requests.get("http://trigger-router:5000/database/{}".format(key))
+        if r.status_code == 404:
+            fullySetup = False
+            unset.append(key)
+        else:
+            res = r.json()
+            settings[key] = res["database-entry"][key]
+
+    return jsonify({
+        "setup": settings,
+        "fullySetup": fullySetup,
+        "unset": unset
+    })
