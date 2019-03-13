@@ -19,7 +19,7 @@ let router = express.Router();
     }
     */
 
-router.get('/', (req, res) => {
+router.get('/', (req, response) => {
     const pollen = req.query.pollen.split(', ');
     const place = req.query.place;
 
@@ -53,7 +53,8 @@ router.get('/', (req, res) => {
                 });
             });
             
-            console.dir(result, { depth: null, colors: true });
+            // console.dir(result, { depth: null, colors: true });
+            response.send(result);
         });
 
         }).on("error", (err) => {
