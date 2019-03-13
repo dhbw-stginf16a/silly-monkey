@@ -9,53 +9,67 @@ const dbConnectionViaTriggerRouter = "http://trigger-router:5000/database";
 const calenderAdapter = "http://calendar-adatper:5002/";
 const feinstaubAdapter = "http://feinstaub-adapter:5001/isAlarm";
 const weatherAdapter = "http://weather-adapter:5004/getWeather";
+const pollenAdapter = "http://pollen-adapter:5003/getPollen";
 
 app.get('/whatTraining', async (req, res) => {
+  var location;
   try {
-    // TODO: Check if returned nothing
-    const location = await axios(dbConnectionViaTriggerRouter + "/location");
-    console.log(location.data);
-    // const calenderResponse = await axios(calenderAdapter);
-    const feinstaubResponse = await axios(feinstaubAdapter + "?location=" + location);
-    console.log(feinstaubResponse.data);
-    //const weatherResponse = await axios(weatherAdapter);
-    // let time = dayTimeDescription();
-
-   /*  let date = new Date();
-    let hour = date.getHours();
-    function dayTimeDescription() {
-        if(hour < 12) {
-            time = "morning";
-        } else time = "evening";
-    }  */
-
-    let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
-    //let temperature = weatherResponse.data.main.temp;
-    //let weather = weatherResponse.data.weather[0].main;
-
-    //let result = {
-    //    isfeinstaub: isFeinstaubAlarm,
-    //    temp: temperature,
-    //    weatherDescription: weather
-    //    //dayTime: time
-    //};
-    
-    let answer = "I'm not quite sure";
-    if (isFeinstaubAlarm) {
-        answer = "Better stay inside!";
-    } else {
-        answer = "Do something outside";
-    }
-
-    console.log(answer);
-    res.send({ "answer": answer});
-
+    location = await axios(dbConnectionViaTriggerRouter + "/location");
   } catch (error) {
-    console.log(error)
+    console.log(error.message)
+    if(error.response.status == 404) {
+      res.send({
+        "error": "Location Eintrag nicht in der Datenbank"
+      })
+    } else 
     res.send({
-      "error": error
+      "error": error.message
     })
   }
+
+  var feinstaubResponse;
+  try {
+    feinstaubResponse = await axios(feinstaubAdapter + "?location=" + location);
+  } catch (error) {
+    console.log(error.message)
+    res.send({
+      "error": error.message
+    })
+  }
+
+  var pollenResponse;
+  try {
+    pollenResponse = await axios(pollenAdapter, {params:{
+      "pollen": "Erle",
+      "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
+    }});
+  } catch (error) {
+    console.log(error.message)
+    res.send({
+      "error": error.message
+    })
+  }
+
+let isErlenPollen = pollenResponse.data.Erle.today ;
+
+let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
+
+let answer = "I'm not quite sure";
+
+console.log(isErlenPollen);
+if (isErlenPollen >= 1 && isFeinstaubAlarm) {
+    answer = "Due to the high density of pollen and particulates you better stay inside";
+} else if (isErlenPollen < 1 && isFeinstaubAlarm){
+    answer = "Due to the low density of pollen, but the high density of particulates you better decide yourself.";
+} else if (isErlenPollen >= 1 && !isFeinstaubAlarm){
+  answer = "There is no particulates alarm today, but a high density of pollen. Better stay inside.";
+} else {
+  answer = "There are good conditions for a quick run today!"
+}
+
+// console.log(answer);
+res.send({ "answer": answer});
+
 })
 
 app.listen(port, () => console.log(`Personal Trainer Use Case listening on port ${port}!`))
