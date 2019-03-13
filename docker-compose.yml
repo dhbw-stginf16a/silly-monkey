@@ -2,8 +2,6 @@ version: '3'
 services:
   database:
     image: redis:5
-    environment:
-      POSTGRES_PASSWORD: chei1eixoo5Bohku
     volumes:
       - db-data:/data
 #     - ./infrastructure/redis.conf:/usr/local/etc/redis/redis.conf
