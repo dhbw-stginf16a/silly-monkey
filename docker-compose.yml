@@ -15,12 +15,6 @@ services:
       - 80:80
       - 443:443
       - 2015:2015
-    links:
-      - trigger-router
-      - feinstaub-adapter
-      - calendar-adapter
-      - pollen-adapter
-      - wetter-adapter
   trigger-router:
     build: ./trigger-router
     image: johnazoidberg/sm-trigger-router
