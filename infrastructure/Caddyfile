@@ -3,3 +3,7 @@
 proxy /triggerRouter trigger-router:5000/ {
   without /triggerRouter
 }
+
+proxy /triggerRouter/setup setup-usecase:5012 {
+  without /triggerRouter
+}
