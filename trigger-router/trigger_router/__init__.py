@@ -34,13 +34,15 @@ def genericTrigger():
         return "Trigger '{}' was triggered, but we don't know how to handle it!".format(trigger)
 
 
-@app.route("/database/<key>", methods=["GET", "POST"])
+@app.route("/database/<key>", methods=["GET", "POST", "DELETE"])
 def database(key):
     r = redis.Redis(host='database', port=6379, db=0)
     if request.method == "POST":
         jsonRequest = request.get_json()
         value = json.dumps(jsonRequest["value"]).encode()
         r.set(key, value)
+    elif request.method == "DELETE":
+        r.delete(key)
 
     value = r.get(key)
     if not value:
