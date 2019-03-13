@@ -37,9 +37,9 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-  var pollenResponse;
+  var pollenErleResponse;
   try {
-    pollenResponse = await axios(pollenAdapter, {params:{
+    pollenErleResponse = await axios(pollenAdapter, {params:{
       "pollen": "Erle",
       "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
     }});
@@ -50,22 +50,39 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-let isErlenPollen = pollenResponse.data.Erle.today ;
+  var pollenHaselResponse;
+  try {
+    pollenHaselResponse = await axios(pollenAdapter, {params:{
+      "pollen": "Hasel",
+      "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
+    }});
+  } catch (error) {
+    console.log(error.message)
+    res.send({
+      "error": error.message
+    })
+  }
 
+let isErlenPollen = pollenErleResponse.data.Erle.today ;
+let isHaselPollen = pollenHaselResponse.data.Hasel.today ;
 let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
+
 
 let answer = "I'm not quite sure";
 
-console.log(isErlenPollen);
-if (isErlenPollen >= 1 && isFeinstaubAlarm) {
-    answer = "Due to the high density of pollen and particulates you better stay inside";
-} else if (isErlenPollen < 1 && isFeinstaubAlarm){
-    answer = "Due to the low density of pollen, but the high density of particulates you better decide yourself.";
-} else if (isErlenPollen >= 1 && !isFeinstaubAlarm){
-  answer = "There is no particulates alarm today, but a high density of pollen. Better stay inside.";
+if (isErlenPollen >= 2 && isHaselPollen >= 2){
+    answer = "Today is not a good day to go outside due to the extrem high density of Pollen.";
+} else if (isErlenPollen < 2 && isHaselPollen >= 2) {
+    answer = "Today is not a good day to go outside due to the extrem high density of Hasel.";
+} else if (isErlenPollen >= 2 && isHaselPollen < 2) {
+  answer = "Today is not a good day to go outside due to the extrem high density of Erle.";
 } else {
-  answer = "There are good conditions for a quick run today!"
-}
+  if(isFeinstaubAlarm) {
+    answer = "The density of pollen is low today, but there is a high density of particulates. You better decide yourself.";
+  } else {
+    answer = "Today there are perfect conditions to go out for a run.";
+  }
+} 
 
 // console.log(answer);
 res.send({ "answer": answer});
