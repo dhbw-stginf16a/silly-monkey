@@ -7,39 +7,61 @@ const { JSDOM } = jsdom;
 const router = express.Router();
 const trafficUrl = 'https://www.verkehrsinfo.de/httpsmobil';
 
-router.get('/', (req, response) => {
+router.get('/', async (req, response) => {
     const streets = req.query.streets.split(', ');
+    let result = [];
 
-    https.get(`${trafficUrl}/?c=staulist&street=A1`, (res) => {
-        let trafficData = '';
+    for(let i = 0; i < streets.length; i++) {
+        const content = await getContentFromApi(streets[i]);
+        // console.log(content);
+        result = result.concat(content);
+    }
 
-        res.on('data', (chunk) => {
-            trafficData += chunk;
-        });
+    // console.log(result);
 
-        res.on('end', () => {
-            // console.dir(trafficData, { depth: null, colors: true });
-            const dom = new JSDOM(trafficData);
-            const document = dom.window.document;
-            console.log(document.querySelector('div.message span.message_heading').innerHTML);
-            console.log(document.querySelector('div.message').childNodes[4].innerHTML);
+    response.send(result);
+});
 
-            result = [
-                {
-                    street: 'A1',
-                    direction: 'Koeln Richtung Euskirchen',
-                    message: 'zwischen Frechen und Gleuel (105) Fahrbahnausbesserung, Richtungsfahrbahn gesperrt, bis 11.03.2019 05:00 Uhr ',
-                }
-            ]
 
-            response.send(result);
-        });
+function getContentFromApi(street) {
+    return new Promise((resolve, reject) => {
+        https.get(`${trafficUrl}/?c=staulist&street=${street}`, (res) => {
+            let trafficData = '';
+    
+            res.on('data', (chunk) => {
+                trafficData += chunk;
+            });
+    
+            res.on('end', () => {
+                // console.dir(trafficData, { depth: null, colors: true });
+                const dom = new JSDOM(trafficData);
+                const document = dom.window.document;
+                const headings = Array.from(document.querySelectorAll('div.message span.message_heading'));
+                const messages = Array.from(document.querySelectorAll('div.message'));
 
-        res.on('error', (err) => {
-            console.log('failed to retrieve traffic data');
-            console.log(err);
+                const result = [];
+
+                headings.forEach((el, index) => {
+                    const heading = el.innerHTML;
+                    const message = messages[index].childNodes[4].innerHTML;
+
+                    result.push({
+                        street: street,
+                        direction: heading,
+                        message: message
+                    });
+                });
+    
+                resolve(result);
+            });
+    
+            res.on('error', (err) => {
+                console.log(`failed to retrieve traffic data for street ${street}`);
+                console.log(err);
+            });
         });
     });
-});
+    
+}
 
 module.exports = router;
