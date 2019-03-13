@@ -48,7 +48,8 @@ def genericTrigger():
                 return jsonify({
                     "error": "This key doesn't exist"
                 }), 400
-            requests.post("http://trigger-router:5000/database/{}".format(key), data={
+            app.logger.error('POSTing key: %s', key)
+            requests.post("http://trigger-router:5000/database/{}".format(key), json={
                 "value": val
             })
     elif request.method == "DELETE":

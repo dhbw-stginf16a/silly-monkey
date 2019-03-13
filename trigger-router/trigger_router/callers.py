@@ -8,5 +8,5 @@ def callHomeOffice(parameters):
 def callPersonalTrainer(parameters):
     # Ignore parameters for know
     # Question: What training should I do today?
-    res = requests.get("http://personaltrainer-usecase:5011/whatTraining", data={}).json()
+    res = requests.get("http://personaltrainer-usecase:5011/whatTraining", json={}).json()
     return jsonify({"answer": res["answer"]})
