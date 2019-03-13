@@ -50,10 +50,10 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-  var pollenHaselResponse;
+  var pollenGraeserResponse;
   try {
-    pollenHaselResponse = await axios(pollenAdapter, {params:{
-      "pollen": "Hasel",
+    pollenGraeserResponse = await axios(pollenAdapter, {params:{
+      "pollen": "Graeser",
       "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
     }});
   } catch (error) {
@@ -64,17 +64,17 @@ app.get('/whatTraining', async (req, res) => {
   }
 
 let isErlenPollen = pollenErleResponse.data.Erle.today ;
-let isHaselPollen = pollenHaselResponse.data.Hasel.today ;
+let isGraeserPollen = pollenGraeserResponse.data.Graeser.today ;
 let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
 
-
+console.log(pollenGraeserResponse);
 let answer = "I'm not quite sure";
 
-if (isErlenPollen >= 2 && isHaselPollen >= 2){
+if (isErlenPollen >= 2 && isGraeserPollen >= 2){
     answer = "Today is not a good day to go outside due to the extrem high density of Pollen.";
-} else if (isErlenPollen < 2 && isHaselPollen >= 2) {
-    answer = "Today is not a good day to go outside due to the extrem high density of Hasel.";
-} else if (isErlenPollen >= 2 && isHaselPollen < 2) {
+} else if (isErlenPollen < 2 && isGraeserPollen >= 2) {
+    answer = "Today is not a good day to go outside due to the extrem high density of Graeser.";
+} else if (isErlenPollen >= 2 && isGraeserPollen < 2) {
   answer = "Today is not a good day to go outside due to the extrem high density of Erle.";
 } else {
   if(isFeinstaubAlarm) {
