@@ -24,3 +24,6 @@ services:
   personaltrainer-usecase:
     ports:
       - 5011:5011
+  setup-usecase:
+    ports:
+      - 5012:5012

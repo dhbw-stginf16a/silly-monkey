@@ -55,6 +55,11 @@ services:
     image: johnazoidberg/sm-personaltrainer-usecase
     expose:
       - 5011
+  setup-usecase:
+    build: ./setup-usecase
+    image: johnazoidberg/sm-setup-usecase
+    expose:
+     - 5012
 volumes:
   db-data:
     driver: local
