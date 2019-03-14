@@ -6,8 +6,8 @@ const router = express.Router();
 const port = 5010;
 
 const dbConnectionViaTriggerRouter = "";
-const calenderAdapter = "http://localhost:5002/";
-const calenderMeetings = "http://localhost:5002/calendar/todaysAppointments";
+const calenderAdapter = "calendar/";
+const calenderMeetings = "/calendar/todaysAppointments";
 
 
 app.get('/userGreeting', async (req, res) => {
