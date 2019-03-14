@@ -11,20 +11,22 @@ router.get('/getMockCalendar', async function(req, res, next) {
 
 
     // Set start of the calendar view to today at midnight
-    const start = new Date(new Date().setHours(0,0,0));
+    const start1 = new Date(new Date().setHours(9,0,0));
+    const start2 = new Date(new Date().setHours(13,0,0));
     // Set end of the calendar view to 7 days from start
-    const end = new Date(new Date(start).setDate(start.getDate() + 1));
+    const end1 = new Date(new Date().setHours(10,0,0));
+    const end2 = new Date(new Date().setHours(13,30,0));
 
   parms.events = 
     [{
       subject: "Dentist",
-      start: "9am",
-      end: "10am",
+      start: start1,
+      end: end1,
       location: "Danny Dentist"
     },
     {subject: "Call Boss",
-    start: "1pmm",
-    end: "1pm",
+    start: start2,
+    end: end2,
     location: "Office"
     }];
 
