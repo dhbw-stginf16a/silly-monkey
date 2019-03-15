@@ -45,7 +45,7 @@ async function getStationIdByName(stationName) {
         //console.log(allStationsObj);
 
         for (let station of allStationsJson) {
-            if(station.name == stationName || station.fullName == stationName) {
+            if(station.fullName == stationName) {
                 console.log(station.stationId);
                 return (station.stationId);
             }
