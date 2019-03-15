@@ -30,7 +30,7 @@ router.get('/getMockCalendar', async function(req, res, next) {
     location: "Office"
     }];
 
-    res.render('error', parms);
+    res.send('events', parms);
 });
 
 /* GET /calendar */
@@ -90,7 +90,7 @@ router.get('/todaysAppointments', async function(req, res, next) {
       parms.message = 'Error retrieving events';
       parms.error = { status: `${err.code}: ${err.message}` };
       parms.debug = JSON.stringify(err.body, null, 2);
-      res.render('error', parms);
+      res.send('error', parms);
     }
 
   } else {

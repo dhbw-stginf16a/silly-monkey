@@ -1,0 +1,19 @@
+{
+  "name": "vvs-adapter",
+  "version": "1.0.0",
+  "description": "adapter connecting to vvs api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vvs",
+    "adapter"
+  ],
+  "author": "Alex",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.16.0",
+    "axios": "^0.18.0"
+  }
+}
