@@ -118,7 +118,7 @@ if (isErlenPollen >= 2 && isGraeserPollen >= 2){
 } 
 
   //console.log(controlObject);
-  console.log(checkCalendar);
+  console.log(checkCalendar.data);
   res.send({'answer': answer});
 
 })
