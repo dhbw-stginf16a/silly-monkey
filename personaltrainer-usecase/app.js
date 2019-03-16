@@ -104,7 +104,7 @@ let controlObject = {
 let answer = "I'm not quite sure";
 
 if (isErlenPollen >= 2 && isGraeserPollen >= 2){
-    answer = "Today is not a good day to go outside due to the extrem high density of Pollen.";
+    answer = "Today is not a good day to go outside due to the extreme high density of Pollen.";
 } else if (isErlenPollen < 2 && isGraeserPollen >= 2) {
     answer = "Today is not a good day to go outside due to the extrem high density of Graeser.";
 } else if (isErlenPollen >= 2 && isGraeserPollen < 2) {

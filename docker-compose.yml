@@ -45,6 +45,11 @@ services:
     image: johnazoidberg/sm-verkehr-adapter
     expose:
       - 5005
+  vvs-adapter:
+    build: ./vvs-adapter
+    image: johnazoidberg/sm-vvs-adapter
+    expose:
+      - 5006
   goodmorning-usecase:
     build: ./goodmorning-usecase
     image: johnazoidberg/sm-goodmorning-usecase

@@ -18,6 +18,9 @@ services:
   verkehr-adapter:
     ports:
       - 5005:5005
+  vvs-adapter:
+    ports:
+      - 5006:5006
   goodmorning-usecase:
     ports:
       - 5010:5010
