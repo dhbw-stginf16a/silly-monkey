@@ -3,10 +3,10 @@ const request = require('request-promise');
 
 let router = express.Router();
 
-router.post('/', (req, response) => {
-    const time = req.body.time;
-    const location = req.body.location;
-    const country = req.body.country;
+router.get('/', (req, response) => {
+    const time = req.headers.time;
+    const location = req.headers.location;
+    const country = req.headers.country;
 
     let status = "";
 
