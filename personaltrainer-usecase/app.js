@@ -29,7 +29,7 @@ app.get('/whatTraining', async (req, res) => {
 
   var feinstaubResponse;
   try {
-    feinstaubResponse = await axios(feinstaubAdapter + "?location=" + location);
+    feinstaubResponse = await axios(feinstaubAdapter, {params: {"location": location.data}});
   } catch (error) {
     console.log(error.message)
     res.status(500).send({
