@@ -57,7 +57,7 @@ def genericTrigger():
             unset.append(key)
         else:
             res = r.json()
-            settings[key] = res["database-entry"][key]
+            settings[key] = res["value"][key]
 
     return jsonify({
         "setup": settings,

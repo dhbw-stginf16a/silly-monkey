@@ -48,6 +48,6 @@ def database(key):
     if not value:
         return jsonify({"error": "Key not found"}), 404
 
-    return jsonify({"database-entry": {
+    return jsonify({"value": {
         key: json.loads(value.decode())
     }})

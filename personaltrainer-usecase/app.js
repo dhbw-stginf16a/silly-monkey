@@ -18,11 +18,11 @@ app.get('/whatTraining', async (req, res) => {
   } catch (error) {
     console.log(error.message)
     if(error.response.status == 404) {
-      res.send({
+      res.status(500).send({
         "error": "Location Eintrag nicht in der Datenbank"
       })
     } else 
-    res.send({
+    res.status(500).send({
       "error": error.message
     })
   }
@@ -53,36 +53,36 @@ app.get('/whatTraining', async (req, res) => {
 
   var feinstaubResponse;
   try {
-    feinstaubResponse = await axios(feinstaubAdapter + "?location=" + location);
+    feinstaubResponse = await axios(feinstaubAdapter, {params: {"location": location.data}});
   } catch (error) {
     console.log(error.message)
-    res.send({
+    res.status(500).send({
       "error": error.message
     })
   }
 
   var pollenErleResponse;
   try {
-    pollenErleResponse = await axios(pollenAdapter, {params:{
+    pollenErleResponse = await axios(pollenAdapter, {params: {
       "pollen": "Erle",
       "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
     }});
   } catch (error) {
     console.log(error.message)
-    res.send({
+    res.status(500).send({
       "error": error.message
     })
   }
 
   var pollenGraeserResponse;
   try {
-    pollenGraeserResponse = await axios(pollenAdapter, {params:{
+    pollenGraeserResponse = await axios(pollenAdapter, {params: {
       "pollen": "Graeser",
       "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
     }});
   } catch (error) {
     console.log(error.message)
-    res.send({
+    res.status(500).send({
       "error": error.message
     })
   }
@@ -163,8 +163,6 @@ if (isErlenPollen >= 2 && isGraeserPollen >= 2){
   }
 } 
 
-
-  
   res.send({'answer': answer});
 
 })
