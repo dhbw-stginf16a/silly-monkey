@@ -92,8 +92,8 @@ let answer = "I'm not quite sure";
 let isErlenPollen = pollenErleResponse.data.Erle.today ;
 let isGraeserPollen = pollenGraeserResponse.data.Graeser.today ;
 let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
-let calendar = calendarResponse.data.events;
-let startFrom = new Date(new Date().getTime());
+let checkCalendar = calendarResponse.data.events;
+let timeNow = new Date(new Date().getTime());
 let endTime = new Date(new Date().setHours(23,59,59));
 let freeTime = 3600000;
 let a; 
@@ -106,6 +106,8 @@ let controlObject = {
   //'weather': checkWeather
 };
 
+
+calenderCheck(timeNow, checkCalendar, freeTime, endTime);
 // freeTime in mili secs
 function calenderCheck(startFrom, calendar, freeTime, endTime) {
   // sort calendar by start time
@@ -162,7 +164,7 @@ if (isErlenPollen >= 2 && isGraeserPollen >= 2){
     answer = "Today there are perfect conditions to go out for a run.";
   }
 } 
-
+  
   res.send({'answer': answer});
 
 })
