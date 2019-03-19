@@ -95,7 +95,7 @@ app.get('/userGreeting', async (req, res) => {
     }
 
     // Return greeting
-    res.send(greeting)
+    res.send({ "answer": greeting })
   } catch (error) {
     console.log(error)
     res.send({
