@@ -36,12 +36,13 @@ def genericTrigger():
 
 @app.route("/database/<key>", methods=["GET", "POST", "DELETE"])
 def database(key):
+    r = redis.Redis(host='database', port=6379, db=0)
+
     if request.method == "DELETE":
         r.delete(key)
         return ('', 200)
 
     status_code = 200
-    r = redis.Redis(host='database', port=6379, db=0)
     if request.method == "POST":
         jsonRequest = request.get_json()
         value = json.dumps(jsonRequest["value"]).encode()
