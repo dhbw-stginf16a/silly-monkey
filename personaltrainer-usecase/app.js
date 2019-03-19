@@ -38,9 +38,9 @@ app.get('/whatTraining', async (req, res) => {
     })
   } 
 
-/* var weatherResponse;
+  var weatherResponse;
   try {
-    weatherResponse = await axios(weatherAdapter, {params:{
+    weatherResponse = await axios.post(weatherAdapter, {params: {
       "time":1552700000,
       "location":"stuttgart",
       "country":"de"
@@ -50,7 +50,7 @@ app.get('/whatTraining', async (req, res) => {
     res.send({
       "error": error.message
     })
-  }  */
+  }    
 
   var feinstaubResponse;
   try {
@@ -105,8 +105,8 @@ app.get('/whatTraining', async (req, res) => {
     'erle' : isErlenPollen,
     'graeser' : isGraeserPollen,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar
-    //'weather': checkWeather
+    'calender' : checkCalendar,
+    'weather': weatherResponse
   };
 
   calenderCheck(timeNow, checkCalendar, freeTime, endTime);
@@ -170,6 +170,7 @@ app.get('/whatTraining', async (req, res) => {
   }
 
   answerObj = "Alright I will check the conditions for you." + calendarString + airString;
+  console.log(controlObject);
   res.send(answerObj);
 })
 
