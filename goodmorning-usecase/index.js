@@ -36,7 +36,7 @@ app.get('/userGreeting', async (req, res) => {
     var homeLocation;
     try {
       locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
-      homeLocation = locationResponse.data['database-entry'].location;
+      homeLocation = locationResponse.data.value.location;
     } catch (error) {
       console.log(error.message);
       res.send({
@@ -67,11 +67,11 @@ app.get('/userGreeting', async (req, res) => {
     todayNow = todayNow.replace(":/g", "");
     todayNow = todayNow + "0000";
     try {
-      weatherHomeNowResponse = await axios(weatherAdapter, {headers:{
+      weatherHomeNowResponse = await axios.post(weatherAdapter, {
         "time": todayNow,
         "location":homeLocation,
         "country":"de"
-      }});
+      });
       weatherHomeNow = weatherHomeNowResponse.data;
       console.log(weatherHomeNow);
     } catch (error) {
