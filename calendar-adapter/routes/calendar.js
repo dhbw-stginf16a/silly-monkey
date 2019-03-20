@@ -11,13 +11,13 @@ router.get('/getMockCalendar', async function(req, res, next) {
 
 
     // Set start of the calendar view to today at midnight
-    const start1 = new Date(new Date().setHours(9,0,0));
-    const start2 = new Date(new Date().setHours(13,0,0));
-    const start3 = new Date(new Date().setHours(15,0,0));
+    const start1 = new Date(new Date().setHours(9,0,0)).valueOf();
+    const start2 = new Date(new Date().setHours(13,0,0)).valueOf();
+    const start3 = new Date(new Date().setHours(15,0,0)).valueOf();
     // Set end of the calendar view to 7 days from start
-    const end1 = new Date(new Date().setHours(10,0,0));
-    const end2 = new Date(new Date().setHours(13,30,0));
-    const end3 = new Date(new Date().setHours(18,0,0));
+    const end1 = new Date(new Date().setHours(10,0,0)).valueOf();
+    const end2 = new Date(new Date().setHours(13,30,0)).valueOf();
+    const end3 = new Date(new Date().setHours(18,0,0)).valueOf();
    
 
   parms.events = 
@@ -77,15 +77,15 @@ router.get('/todaysAppointments', async function(req, res, next) {
       .orderby('start/dateTime DESC')
       .get();
 
-      var calenderEvents = result.value;
+      var calendarEvents = result.value;
       var events = [];
 
-      for (let calenderEvent of calenderEvents) {
+      for (let calendarEvent of calendarEvents) {
         var event = {};
-        event.subject = calenderEvent.subject;
-        event.start = calenderEvent.start.dateTime;
-        event.end = calenderEvent.end.dateTime;
-        event.location = calenderEvent.location.displayName;
+        event.subject = calendarEvent.subject;
+        event.start = calendarEvent.start.dateTime;
+        event.end = calendarEvent.end.dateTime;
+        event.location = calendarEvent.location.displayName;
         console.log(event);
         events.push(event);
       }

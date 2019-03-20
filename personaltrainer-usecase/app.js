@@ -88,7 +88,7 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-  let answerObj = "I'm not quite sure";
+  let answerStr = "I'm not quite sure";
   let isErlenPollen = pollenErleResponse.data.Erle.today ;
   let isGraeserPollen = pollenGraeserResponse.data.Graeser.today ;
   let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
@@ -180,9 +180,14 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
+<<<<<<< HEAD
   answerObj = "Alright I will check the conditions for you. " + calendarString + airString;
   // console.log(controlObject);
   res.send(answerObj);
+=======
+  answerStr = "Alright I will check the conditions for you." + calendarString + airString;
+  res.send({ "answer": answerStr });
+>>>>>>> b063f6eca241bcedccd1990613068408d787e695
 })
 
 app.listen(port, () => console.log(`Personal Trainer Use Case listening on port ${port}!`))
