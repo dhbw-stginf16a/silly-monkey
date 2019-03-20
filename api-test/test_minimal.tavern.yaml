@@ -41,3 +41,13 @@ stages:
           parameters: {}
     response:
       status_code: 200
+  - name: Test goodmorning-usecase
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/trigger
+      method: POST
+      json:
+        trigger:
+          type: GoodMorning
+          parameters: {}
+    response:
+      status_code: 200
