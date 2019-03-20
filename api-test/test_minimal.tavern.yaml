@@ -1,0 +1,53 @@
+---
+test_name: Test the database connection and the responses of all use-cases
+
+stages:
+  - name: Database set value
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/database/testValue
+      method: POST
+      json:
+        value: foo
+    response:
+      status_code: 201
+  - name: Database get value
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/database/testValue
+      method: GET
+    response:
+      status_code: 200
+      body:
+        value:
+          testValue: foo
+  - name: Database delete value
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/database/testValue
+      method: DELETE
+    response:
+      status_code: 200
+  - name: Database get deleted value
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/database/testValue
+      method: GET
+    response:
+      status_code: 404
+  - name: Test personaltrainer-usecase
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/trigger
+      method: POST
+      json:
+        trigger:
+          type: PersonalTrainer
+          parameters: {}
+    response:
+      status_code: 200
+  - name: Test goodmorning-usecase
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/trigger
+      method: POST
+      json:
+        trigger:
+          type: GoodMorning
+          parameters: {}
+    response:
+      status_code: 200

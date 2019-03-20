@@ -77,15 +77,15 @@ router.get('/todaysAppointments', async function(req, res, next) {
       .orderby('start/dateTime DESC')
       .get();
 
-      var calenderEvents = result.value;
+      var calendarEvents = result.value;
       var events = [];
 
-      for (let calenderEvent of calenderEvents) {
+      for (let calendarEvent of calendarEvents) {
         var event = {};
-        event.subject = calenderEvent.subject;
-        event.start = calenderEvent.start.dateTime;
-        event.end = calenderEvent.end.dateTime;
-        event.location = calenderEvent.location.displayName;
+        event.subject = calendarEvent.subject;
+        event.start = calendarEvent.start.dateTime;
+        event.end = calendarEvent.end.dateTime;
+        event.location = calendarEvent.location.displayName;
         console.log(event);
         events.push(event);
       }

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const axios = require("axios");
 
-const dbConnectionViaTriggerRouter = "triggerRouter/database/calenderAccess";
+const dbConnectionViaTriggerRouter = "triggerRouter/database/calendarAccess";
 
 const credentials = {
   client: {
@@ -50,7 +50,7 @@ async function getTokenFromCode(auth_code, res) {
 
 async function getAccessToken(res) {
   // Do we have an access token cached?
-  const dbAccessTokenResponse = await axios(calenderAdapter);
+  const dbAccessTokenResponse = await axios(calendarAdapter);
 
   if (token) {
     // We have a token, but is it expired?
