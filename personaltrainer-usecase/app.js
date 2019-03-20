@@ -38,7 +38,7 @@ app.get('/whatTraining', async (req, res) => {
     })
   } 
 
-  var weatherResponse;
+  /* var weatherResponse;
   try {
     weatherResponse = await axios.post(weatherAdapter, {params: {
       "time":1552700000,
@@ -50,7 +50,7 @@ app.get('/whatTraining', async (req, res) => {
     res.send({
       "error": error.message
     })
-  }    
+  }   */  
 
   var feinstaubResponse;
   try {
@@ -105,8 +105,8 @@ app.get('/whatTraining', async (req, res) => {
     'erle' : isErlenPollen,
     'graeser' : isGraeserPollen,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar,
-    'weather': weatherResponse
+    'calender' : checkCalendar/* ,
+    'weather': weatherResponse */
   };
 
   calenderCheck(timeNow, checkCalendar, freeTime, endTime);
@@ -115,41 +115,52 @@ app.get('/whatTraining', async (req, res) => {
     // sort calendar by start time
     calendar.sort(function (a, b){ return a.start - b.start});
     let a = -1;
+    var i = 0;
 
     // search for calendar entry that ends after startTime
-    for (var i = 0; i < calendar.lenght; i++) {
-      if (calendar.end > startFrom) {
+    for (var i = 0; i < calendar.length; i++) {
+      console.log(calendar[i].end);
+      console.log(startFrom.valueOf());
+      if (calendar[i].end > startFrom.valueOf()) {
         a = i; 
-        console.log('Found Entry, set a and check for free timeslot...')
+        console.log('Found Entry, set a and check for free timeslot... ')
         break;
       } 
-    }
+    } 
+
+    /* while (calendar[i]) {
+      if (calendar[i].end > startFrom) {
+        a = i; 
+        console.log('Found Entry, set a and check for free timeslot... ')
+        break;
+      } else i++;
+    } */
 
     // if no entry was found -> free day 
     if (a < 0) {
-      calendarString = "Today you have no appointments. Let me check the weather...";
-      return startFrom;
+      calendarString = "Today you have no appointments. Let me check the weather... ";
+      return startFrom.valueOf();
     } 
 
     // search timeslot from found calendar entry 
     for (var i = a; i < calendar.lenght; i++) {
       if (calendar[i].start - calendar[a].end >= freeTime) {
         // found entry
-        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather..."
+        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather... "
         return calendar[a].end;
       } 
       // if entry overlapping, take the end from the longer entry 
       if (calendar[i].end > calendar[a].end) {
         a = i;
-        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather..."
+        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather... "
       } 
     }
     
     // last calendar element
-    if (endTime - calendar[a].end >= freeTime){
-      calendarString = "This will be your last appointment. Let me check the weather...";
-      return calendar[a].end;
-    }
+      if (endTime - calendar[a].end >= freeTime){
+        calendarString = "This will be your last appointment. Let me check the weather... ";
+        return calendar[a].end;
+    } 
   } 
 
   airCheck();
@@ -169,8 +180,8 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
-  answerObj = "Alright I will check the conditions for you." + calendarString + airString;
-  console.log(controlObject);
+  answerObj = "Alright I will check the conditions for you. " + calendarString + airString;
+  // console.log(controlObject);
   res.send(answerObj);
 })
 
