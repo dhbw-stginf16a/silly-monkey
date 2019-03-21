@@ -180,14 +180,9 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
-<<<<<<< HEAD
   answerObj = "Alright I will check the conditions for you. " + calendarString + airString;
   // console.log(controlObject);
   res.send(answerObj);
-=======
-  answerStr = "Alright I will check the conditions for you." + calendarString + airString;
-  res.send({ "answer": answerStr });
->>>>>>> b063f6eca241bcedccd1990613068408d787e695
 })
 
 app.listen(port, () => console.log(`Personal Trainer Use Case listening on port ${port}!`))
