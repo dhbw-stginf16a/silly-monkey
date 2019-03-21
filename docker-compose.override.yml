@@ -30,3 +30,6 @@ services:
   setup-usecase:
     ports:
       - 5012:5012
+  daily-overview-usecase:
+    ports:
+      - 5013:5013
