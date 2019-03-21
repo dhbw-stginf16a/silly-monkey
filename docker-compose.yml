@@ -65,6 +65,11 @@ services:
     image: johnazoidberg/sm-setup-usecase
     expose:
      - 5012
+  daily-overview-usecase:
+    build: ./daily-overview-usecase
+    image: johnazoidberg/sm-daily-overview-usecase
+    expose:
+     - 5013
 volumes:
   db-data:
     driver: local
