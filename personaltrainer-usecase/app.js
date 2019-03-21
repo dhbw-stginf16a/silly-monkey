@@ -15,7 +15,7 @@ app.get('/whatTraining', async (req, res) => {
 
   var locationResponse;
   var regionResponse;
-  
+  let timeNow = new Date(new Date().getTime());
   try {
     // for Wetter Adapter - "Stuttgart"
     locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
@@ -36,9 +36,7 @@ app.get('/whatTraining', async (req, res) => {
 
   var weatherDescription;
   var weatherTemp; 
-  var todayNow = new Date().toLocaleTimeString().toString();
-  todayNow = todayNow.replace(":/g", "");
-  todayNow = todayNow + "0000";
+  var todayNow = Date.now();
   try {
     weatherHomeNowResponse = await axios.post(weatherAdapter, {
       "time": todayNow,
@@ -95,7 +93,7 @@ app.get('/whatTraining', async (req, res) => {
   let isGraeserPollen = pollenGraeserResponse.data.Graeser.today ;
   let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
   let checkCalendar = calendarResponse.data.events;
-  let timeNow = new Date(new Date().getTime());
+  
   let timeTest = new Date(new Date().setHours(13,0,0)).valueOf();
   let endTime = new Date(new Date().setHours(23,59,59));
   let freeTime = 3600000;
@@ -108,19 +106,25 @@ app.get('/whatTraining', async (req, res) => {
     /* 'erle' : isErlenPollen,
     'graeser' : isGraeserPollen,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar , 
-    'location' : locationResponse.data.value.location, */
+    'calender' : checkCalendar , */
+    'location' : locationResponse.data.value.location, 
     'Temperature' : weatherTemp,
-    'Weather Description' : weatherDescription
+    'Weather Description' : weatherDescription,
+    'time' : todayNow
   };
 
-  
-  function weatherCheck() {
-
+  let weatherString;
+  weatherCheck(weatherDescription, weatherTemp);
+  function weatherCheck(desc, temp) {
+    let lookupValue = "rain";
+    if(desc.toLowerCase().indexOf(lookupValue) === -1) {
+      weatherString = "No rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+    } else {
+      weatherString = "Rainy and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+    }
   }
 
   calenderCheck(timeNow, checkCalendar, freeTime, endTime);
-
   function calenderCheck(startFrom, calendar, freeTime, endTime) {
     // sort calendar by start time
     calendar.sort(function (a, b){ return a.start - b.start});
@@ -129,10 +133,10 @@ app.get('/whatTraining', async (req, res) => {
 
     // search for calendar entry that ends after startTime
     for (var i = 0; i < calendar.length; i++) {
-      console.log("Number of appointments today:" + [i+1]);
+      // console.log("Number of appointments today:" + [i+1]);
       if (calendar[i].end > startFrom.valueOf()) {
         a = i; 
-        console.log('Found Entry, set a and check for free timeslot... ')
+        // console.log('Found Entry, set a and check for free timeslot... ')
         break;
       } 
     } 
@@ -148,13 +152,13 @@ app.get('/whatTraining', async (req, res) => {
     for (var i = a; i < calendar.length; i++) {
       if (calendar[i].start - calendar[a].end >= freeTime) {
           // found entry
-          console.log('entered 1');
+          // console.log('entered 1');
           calendarString = "After your appointment " + calendar[a].subject + " there is a timeslot of about an hour before the next meeting starts. Let me check the weather... "
           return calendar[a].end;
       } 
       // if entry overlapping, take the end from the longer entry 
       if (calendar[i].end > calendar[a].end) {
-        console.log('entered 2');
+        // console.log('entered 2');
         a = i;
         calendarString = "There is a timeslot of about an hour after your appointment " + calendar[a].subject +  " Let me check the weather... "
       } 
@@ -162,7 +166,7 @@ app.get('/whatTraining', async (req, res) => {
     
     // last calendar element
       if (endTime - calendar[a].end >= freeTime){
-        console.log('entered 3');
+        // console.log('entered 3');
         calendarString = "After your last appointment " + calendar[a].subject + " you will have enough time to workout. Let me check the weather... ";
         return calendar[a].end;
     } 
@@ -185,7 +189,7 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
-  answerObj = "Alright I will check the conditions for you. " + calendarString + airString;
+  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + airString;
   console.log(controlObject);
   res.send(answerObj);
 })
