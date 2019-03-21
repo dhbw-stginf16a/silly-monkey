@@ -152,4 +152,120 @@ router.get('/', async (req, response) => {
 });
 
 
+router.get('/justMeetings', async (req, response) => {
+
+        //calendar
+    try {
+        calenderMeetingsResponse = await axios(calenderMeetings);
+    } catch (error) {
+        console.log(error.message);
+        res.send({
+            "error": error.message
+        });
+    }
+    var scheduledMeetings = calenderMeetingsResponse.data;
+
+
+    for (let meeting of scheduledMeetings.events) {
+        var meetingStart = new Date(meeting.start);
+        var meetingEnd = new Date(meeting.end);
+
+        var startTime = meetingStart.getHours() + ":" + meetingStart.getMinutes();
+        if(meetingStart.getMinutes() == 0) {
+            startTime += "0";
+        }
+        var endTime = meetingEnd.getHours() + ":" + meetingEnd.getMinutes();
+        if(meetingEnd.getMinutes() == 0) {
+            endTime += "0";
+        }
+
+        var meetingOverview = meeting.subject;
+
+        meetingOverview += " at " + startTime;
+        meetingOverview += "";
+        meetingOverview += " at ";
+        meetingOverview += meeting.location;
+        meetingOverview += ". ";
+        meetingOverview += "This meeting ends at " + endTime + ". ";
+
+    }
+
+
+    response.send("today you've got the following meetings. " + meetingOverview);
+
+
+
+});
+
+router.get('/justTraffic', async (req, response) => {
+
+    var trainResponse;
+    var trainHomeStation;
+    var homeLocation;
+    var vvsResponse;
+    var vvsDepartures;
+    var trainInfo = "";
+    var trafficResponse;
+    var trafficData;
+    var trafficInfo = "";
+    var raodResponse;
+    var favRoads;
+    try {
+        trainResponse = await axios(dbConnectionViaTriggerRouter + "/homeStation");
+        raodResponse = await axios(dbConnectionViaTriggerRouter + "/favRoads");
+        favRoads = raodResponse.data.value.favRoads;
+        trainHomeStation = trainResponse.data.value.homeStation;
+        vvsResponse = await axios(vvsAdapter + "?stationname=" + trainHomeStation);
+        vvsDepartures = vvsResponse.data;
+        trafficResponse = await axios(trafficAdapter + "?streets=" + favRoads);
+
+
+        //vvs
+
+
+        for (let dep of vvsDepartures) {
+            if(dep.delay >= 4) {
+                trainInfo += "The train " + dep.number + " in direction " + dep.direction +" is delayed by " + dep.delay + " minutes.";
+            }
+        }
+
+        if(trainInfo === "") {
+            trainInfo += "There are no delayed trains. What a surprise!";
+        }
+
+        //verkehr
+        trafficData = trafficResponse.data;
+        console.log(trafficData);
+
+        for (let traffic of trafficData) {
+            trafficInfo += traffic.message + ". ";
+        }
+
+        if(trafficInfo === "") {
+            trafficInfo += "There are no delays on your usual roads. ";
+        }
+        console.log(trafficInfo);
+
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.send({
+            "error": error.message
+        });
+    }
+
+
+    response.send("At your preferred station " + trainHomeStation +
+        " " + trainInfo +
+        " " + trafficInfo);
+
+
+
+});
+
+
+
+
+
 module.exports = router;
