@@ -13,9 +13,15 @@ const weatherAdapter = "http://wetter-adapter:5004/getWeather";
 
 app.get('/whatTraining', async (req, res) => {
 
-  var location;
+  var locationResponse;
+  var regionResponse;
+  
   try {
-    location = await axios(dbConnectionViaTriggerRouter + "/location");
+    // for Wetter Adapter - "Stuttgart"
+    locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
+    // for Feinstaub Adapter - "Oberrhein und unteres Neckartal"
+    regionResponse = await axios(dbConnectionViaTriggerRouter + "/partRegion");
+    calendarResponse = await axios(calenderAdapter);
   } catch (error) {
     console.log(error.message)
     if(error.response.status == 404) {
@@ -28,33 +34,29 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-  var calendarResponse;
+  var weatherDescription;
+  var weatherTemp; 
+  var todayNow = new Date().toLocaleTimeString().toString();
+  todayNow = todayNow.replace(":/g", "");
+  todayNow = todayNow + "0000";
   try {
-    calendarResponse = await axios(calenderAdapter);
-  } catch (error) {
-    console.log(error.message)
-    res.send({
-      "error": error.message
-    })
-  } 
-
-  /* var weatherResponse;
-  try {
-    weatherResponse = await axios.post(weatherAdapter, {params: {
-      "time":1552700000,
-      "location":"stuttgart",
+    weatherHomeNowResponse = await axios.post(weatherAdapter, {
+      "time": todayNow,
+      "location":locationResponse.data.value.location,
       "country":"de"
-    }});
+    });
+    weatherDescription = weatherHomeNowResponse.data.weather[0].description;
+    weatherTemp =  weatherHomeNowResponse.data.main.temp;
   } catch (error) {
     console.log(error.message)
     res.send({
       "error": error.message
     })
-  }   */  
+  }     
 
   var feinstaubResponse;
   try {
-    feinstaubResponse = await axios(feinstaubAdapter, {params: {"location": location.data}});
+    feinstaubResponse = await axios(feinstaubAdapter, {params: {"location": regionResponse.data.value.partRegion}});
   } catch (error) {
     console.log(error.message)
     res.status(500).send({
@@ -94,6 +96,7 @@ app.get('/whatTraining', async (req, res) => {
   let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
   let checkCalendar = calendarResponse.data.events;
   let timeNow = new Date(new Date().getTime());
+  let timeTest = new Date(new Date().setHours(13,0,0)).valueOf();
   let endTime = new Date(new Date().setHours(23,59,59));
   let freeTime = 3600000;
   let a; 
@@ -102,12 +105,19 @@ app.get('/whatTraining', async (req, res) => {
   let airString;
 
   let controlObject = {
-    'erle' : isErlenPollen,
+    /* 'erle' : isErlenPollen,
     'graeser' : isGraeserPollen,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar/* ,
-    'weather': weatherResponse */
+    'calender' : checkCalendar , 
+    'location' : locationResponse.data.value.location, */
+    'Temperature' : weatherTemp,
+    'Weather Description' : weatherDescription
   };
+
+  
+  function weatherCheck() {
+
+  }
 
   calenderCheck(timeNow, checkCalendar, freeTime, endTime);
 
@@ -119,8 +129,7 @@ app.get('/whatTraining', async (req, res) => {
 
     // search for calendar entry that ends after startTime
     for (var i = 0; i < calendar.length; i++) {
-      console.log(calendar[i].end);
-      console.log(startFrom.valueOf());
+      console.log("Number of appointments today:" + [i+1]);
       if (calendar[i].end > startFrom.valueOf()) {
         a = i; 
         console.log('Found Entry, set a and check for free timeslot... ')
@@ -128,37 +137,33 @@ app.get('/whatTraining', async (req, res) => {
       } 
     } 
 
-    /* while (calendar[i]) {
-      if (calendar[i].end > startFrom) {
-        a = i; 
-        console.log('Found Entry, set a and check for free timeslot... ')
-        break;
-      } else i++;
-    } */
-
     // if no entry was found -> free day 
     if (a < 0) {
+      console.log('entered 0');
       calendarString = "Today you have no appointments. Let me check the weather... ";
       return startFrom.valueOf();
     } 
 
     // search timeslot from found calendar entry 
-    for (var i = a; i < calendar.lenght; i++) {
+    for (var i = a; i < calendar.length; i++) {
       if (calendar[i].start - calendar[a].end >= freeTime) {
-        // found entry
-        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather... "
-        return calendar[a].end;
+          // found entry
+          console.log('entered 1');
+          calendarString = "After your appointment " + calendar[a].subject + " there is a timeslot of about an hour before the next meeting starts. Let me check the weather... "
+          return calendar[a].end;
       } 
       // if entry overlapping, take the end from the longer entry 
       if (calendar[i].end > calendar[a].end) {
+        console.log('entered 2');
         a = i;
-        calendarString = "There is a timeslot after this and the next appointment. Let me check the weather... "
+        calendarString = "There is a timeslot of about an hour after your appointment " + calendar[a].subject +  " Let me check the weather... "
       } 
     }
     
     // last calendar element
       if (endTime - calendar[a].end >= freeTime){
-        calendarString = "This will be your last appointment. Let me check the weather... ";
+        console.log('entered 3');
+        calendarString = "After your last appointment " + calendar[a].subject + " you will have enough time to workout. Let me check the weather... ";
         return calendar[a].end;
     } 
   } 
@@ -181,7 +186,7 @@ app.get('/whatTraining', async (req, res) => {
   }
 
   answerObj = "Alright I will check the conditions for you. " + calendarString + airString;
-  // console.log(controlObject);
+  console.log(controlObject);
   res.send(answerObj);
 })
 
