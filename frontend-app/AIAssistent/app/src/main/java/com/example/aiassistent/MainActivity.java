@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mainTV.setText("Button clicked");
-
+                tts.stop();
                 Transaction transaction = session.recognizeWithService(Configuration.CONTEXT_TAG, appServerData, options, new Transaction.Listener() {
                     public void onStartedRecording(Transaction transaction) {
                         mainTV.setText("Starting");
@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (action_call){
                                 case "getPersonalTrainer": {
-                                    tts.speak("You called the PersonalTrainer", TextToSpeech.QUEUE_ADD, null);
                                     String time_value = "now";
                                     try {
                                         //time_value = concepts.getJSONArray("time_reference").getJSONObject(0).getString("value");
@@ -162,12 +161,20 @@ public class MainActivity extends AppCompatActivity {
                                     getPersonalTrainer(time_value);
                                     break;
                                 }
-                                case "getWeather": {
-                                    tts.speak("You called the WeatherApp", TextToSpeech.QUEUE_ADD, null);
+                                case "getWelcome": {
+                                    getWelcome();
                                     break;
                                 }
-                                case "getWelcome": {
-                                    tts.speak("You called Jarvis", TextToSpeech.QUEUE_ADD, null);
+                                case "getOverview": {
+                                    getOverview("overview");
+                                    break;
+                                }
+                                case "getMeetings": {
+                                    getOverview("meetings");
+                                    break;
+                                }
+                                case "getTraffic": {
+                                    getOverview("traffic");
                                     break;
                                 }
                                 default: {
@@ -225,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getPersonalTrainer(String time){
 
-       final JSONObject trigger_reg = new JSONObject();
+        final JSONObject trigger_reg = new JSONObject();
 
         try {
             trigger_reg.put("trigger", new JSONObject()
@@ -243,6 +250,46 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
+    };
+
+    private void getWelcome(){
+        final JSONObject trigger_reg = new JSONObject();
+
+        try {
+            trigger_reg.put("trigger", new JSONObject()
+                    .put("type", "GoodMorning"));
+        } catch (Exception ex){
+
+        }
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                String resp = makeHTTPRequest(trigger_reg);
+                tts.speak(resp, TextToSpeech.QUEUE_ADD, null);
+            }
+        }).start();
+
+
+    };
+
+    private void getOverview(String key){
+        final JSONObject trigger_reg = new JSONObject();
+
+        try {
+            trigger_reg.put("trigger", new JSONObject()
+                    .put("type", "GoodMorning")
+                    .put("parameters", new JSONObject()
+                            .put("key", key)));
+        } catch (Exception ex){
+
+        }
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                String resp = makeHTTPRequest(trigger_reg);
+                tts.speak(resp, TextToSpeech.QUEUE_ADD, null);
+            }
+        }).start();
     };
 
     private void setSetup(List<String> missing_key_list){
