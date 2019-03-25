@@ -76,8 +76,10 @@ router.get('/', async (req, response) => {
                 "location": locationResponse.data.value.location,
                 "country": "de"
             });
+            console.log("foo");
+            console.log(weatherResponse);
 
-            weather = weatherResponse.data.weather[0].description + " at " + (weatherResponse.data.main.temp - 273.15).toFixed(2) + "°C";
+            weather = weatherResponse.data.weather[0].description + " at " + (weatherResponse.data.main.temp - 273.15).toFixed(2) + "degrees celsius";
 
 
             //verkehr
