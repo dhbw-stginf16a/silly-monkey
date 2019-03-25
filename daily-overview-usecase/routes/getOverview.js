@@ -139,13 +139,13 @@ router.get('/', async (req, response) => {
         }
 
 
-        response.send("the weather at your location " + homeLocation +
+        response.send({"answer": "the weather at your location " + homeLocation +
             " is currently " + weather +
             ". At your preferred station " + trainHomeStation +
             " " + trainInfo +
             " " + trafficInfo +
             feinstaubInfo +
-            "last but not least, today you've got the following meetings. " + meetingOverview);
+            "last but not least, today you've got the following meetings. " + meetingOverview});
 
     }else if(req.query.type == "meetings"){
         //calendar
@@ -185,7 +185,7 @@ router.get('/', async (req, response) => {
         }
 
 
-        response.send("today you've got the following meetings. " + meetingOverview);
+        response.send({"answer": "today you've got the following meetings. " + meetingOverview});
 
 
     }else if(req.query.type == "traffic"){
