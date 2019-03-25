@@ -191,7 +191,7 @@ app.get('/whatTraining', async (req, res) => {
 
   answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + airString;
   console.log(controlObject);
-  res.send(answerObj);
+  res.send({"answer": answerObj});
 })
 
 app.listen(port, () => console.log(`Personal Trainer Use Case listening on port ${port}!`))
