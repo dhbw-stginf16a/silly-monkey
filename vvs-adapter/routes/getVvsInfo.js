@@ -6,7 +6,7 @@ const allStationsUrl = 'https://efa-api.asw.io/api/v1/station/';
 
 router.get('/', async (req, res) => {
     const stationName = req.query.stationname;
-    console.log(stationName);
+    //console.log(stationName);
 
     if(typeof stationName == 'undefined') {
         res.send("Error. Stationname not available.");
@@ -24,7 +24,30 @@ router.get('/', async (req, res) => {
 
     const stationDep = await axios(stationDepUrl);
 
-    res.send(stationDep.data);
+    //
+    var stationDepartures = stationDep.data;
+    var returnDep = [];
+
+    //return only trains running in next 20 min
+    var dateTemp = new Date();
+    var dateNow = new Date();
+
+    for (let dep of stationDepartures) {
+        //console.log(dep);
+        dateTemp.setHours(dep.departureTime.hour-1);
+        dateTemp.setMinutes(dep.departureTime.minute);
+
+        var minuteDifference =  parseInt((dateTemp.getTime() - dateNow.getTime())/1000/60);
+        //console.log(minuteDifference);
+  
+        if(minuteDifference < 21) {
+          returnDep.push(dep);
+        }
+    }
+
+    //console.log(returnDep);
+
+    res.send(returnDep);
 });
 
 async function getStationIdByName(stationName) {
