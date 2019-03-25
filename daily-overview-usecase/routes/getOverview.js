@@ -12,8 +12,8 @@ const calenderAdapter = "http://calendar-adapter:5002/calendar";
 const calenderMeetings = "http://calendar-adapter:5002/calendar/getMockCalendar";
 const pollenAdapter = "http://pollen-adapter:5003/getPollen";
 
-router.post('/', async (req, response) => {
-    if(req.body.key == "overview") {
+router.get('/', async (req, response) => {
+    if(req.query.type === undefined || req.query.type == "overview") {
         var locationResponse;
         var trainResponse;
         var trainHomeStation;
@@ -147,7 +147,7 @@ router.post('/', async (req, response) => {
             feinstaubInfo +
             "last but not least, today you've got the following meetings. " + meetingOverview);
 
-    }else if(req.body.key == "meetings"){
+    }else if(req.query.type == "meetings"){
         //calendar
         try {
             calenderMeetingsResponse = await axios(calenderMeetings);
@@ -188,7 +188,7 @@ router.post('/', async (req, response) => {
         response.send("today you've got the following meetings. " + meetingOverview);
 
 
-    }else if(req.body.key == "traffic"){
+    }else if(req.query.type == "traffic"){
         var trainResponse;
         var trainHomeStation;
         var homeLocation;
@@ -246,9 +246,9 @@ router.post('/', async (req, response) => {
         }
 
 
-        response.send("At your preferred station " + trainHomeStation +
+        response.send({"answer": "At your preferred station " + trainHomeStation +
             " " + trainInfo +
-            " " + trafficInfo);
+            " " + trafficInfo});
 
 
     }
