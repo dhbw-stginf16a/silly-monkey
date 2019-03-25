@@ -33,3 +33,6 @@ services:
   daily-overview-usecase:
     ports:
       - 5013:5013
+  homeoffice-usecase:
+    ports:
+      - 5014:5014
