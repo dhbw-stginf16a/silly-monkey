@@ -14,3 +14,7 @@ def callPersonalTrainer(parameters):
 def callGoodmorning(parameters):
     res = requests.get("http://goodmorning-usecase:5010/userGreeting", json={}).json()
     return jsonify({"answer": res["answer"]})
+
+def callDailyOverview(parameters):
+    res = requests.get("http://daily-overview-usecase:5013/getOverviw", json={}).json()
+    return jsonify({"answer": res["answer"]})
