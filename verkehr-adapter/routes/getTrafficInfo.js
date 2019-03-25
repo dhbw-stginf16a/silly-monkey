@@ -11,6 +11,7 @@ router.get('/', async (req, response) => {
     const streets = req.query.streets.split(', ');
     let result = [];
 
+<<<<<<< HEAD
     for(let i = 0; i < streets.length; i++) {
         const content = await getContentFromApi(streets[i]);
         // console.log(content);
@@ -63,5 +64,51 @@ function getContentFromApi(street) {
     });
     
 }
+=======
+    streets.forEach(async (street) => {
+        const tempResult = [];
+        await https.get(`${trafficUrl}/?c=staulist&street=${street}`, (res) => {
+            let trafficData = '';
+
+            res.on('data', (chunk) => {
+                trafficData += chunk;
+            });
+
+            res.on('end', () => {
+                const dom = new JSDOM(trafficData);
+                const document = dom.window.document;
+
+                //c onsole.log(document.querySelector('div.message span.message_heading').innerHTML);
+                // console.log(document.querySelector('div.message').childNodes[4].innerHTML);
+
+                const directions = document.querySelectorAll('div.messsage span.message_heading');
+                const messages = document.querySelectorAll('div.message');
+
+                
+                directions.forEach((direction, index) => {
+                    tempResult.push({
+                        street: street,
+                        direction: direction.innerHTML,
+                        message: messages[index].childNodes[4].innerHTML
+                    });
+
+                    console.log(tempResult);
+                });
+            });
+
+            res.on('error', (err) => {
+                console.log('failed to retrieve traffic data');
+                console.log(err);
+            });
+        });+
+
+        console.log(tempResult);
+    });
+
+    console.log(result);
+
+    response.send(result);
+});
+>>>>>>> complete logic
 
 module.exports = router;
