@@ -3,7 +3,8 @@ import requests
 
 
 def callHomeOffice(parameters):
-    return jsonify({"result": "Called HomeOffice use case"})
+    res = requests.get("http://homeoffice-usecase:5014/getHORecommendation", json={}).json()
+    return jsonify({"answer": res["answer"]})
 
 def callPersonalTrainer(parameters):
     # Ignore parameters for know

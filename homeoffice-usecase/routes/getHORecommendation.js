@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
     const pollen = await axios(`${pollenAdapter}/getPollen?pollen=${pollenPref.join(', ')}`).data.value;
     const traffic = await axios(`${trafficAdapter}/getTrafficInfo`).data.value;
     const vvs = await axios(`${vvsAdapter}/getVvsDepartures`).data.value;
-    res.send('You should go to your office today.');
+    res.send({"answer": 'You should go to your office today.'});
 });
 
 module.exports = router;
