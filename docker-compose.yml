@@ -18,6 +18,8 @@ services:
   trigger-router:
     build: ./trigger-router
     image: johnazoidberg/sm-trigger-router
+    volumes:
+      - ./infrastructure/serviceAccountKey.json:/home/trigger-router/trigger_router/serviceAccountKey.json
     expose:
       - 5000
   feinstaub-adapter:
