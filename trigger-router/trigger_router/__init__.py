@@ -20,7 +20,7 @@ def page_not_found(e):
 
 @app.before_request
 def init_db_connection():
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate("/home/trigger-router/trigger_router/serviceAccountKey.json")
     initialize_app(cred)
 
 @app.route("/proactive", methods=["POST"])
