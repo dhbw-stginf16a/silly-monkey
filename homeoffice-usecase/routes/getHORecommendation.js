@@ -3,11 +3,11 @@ const axios = require('axios');
 
 const router = express.Router();
 
-const vvsAdapter = 'http://localhost:5006/getVvsDepartures';
-const trafficAdapter = 'http://localhost:5005/getTrafficInfo';
-const feinstaubAdapter = 'http://localhost:5001/isAlarm';
-const pollenAdapter = 'http://localhost:5003/getPollen';
-const dbConnectionViaTriggerRouter = 'http://localhost:5000/database';
+const vvsAdapter = 'http://vvs-adapter:5006/getVvsDepartures';
+const trafficAdapter = 'http://verkehr-adapter:5005/getTrafficInfo';
+const feinstaubAdapter = 'http://feinstaub-adapter:5001/isAlarm';
+const pollenAdapter = 'http://pollen-adapter:5003/getPollen';
+const dbConnectionViaTriggerRouter = 'http://trigger-router:5000/database';
 
 router.get('/', async (req, res) => {
     // get preferences
