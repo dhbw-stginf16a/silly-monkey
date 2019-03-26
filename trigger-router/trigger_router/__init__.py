@@ -2,6 +2,7 @@ import json
 
 from flask import Flask, request, jsonify
 import redis
+from firebase_admin import messaging, credentials, initialize_app
 
 from .callers import callHomeOffice, callPersonalTrainer, callGoodmorning, callDailyOverview
 
@@ -15,6 +16,35 @@ def page_not_found(e):
             "error": "Content not found",
             "details": "Tried to access {}".format(request.path)
         }), 404
+
+
+@app.before_request
+def init_db_connection():
+    cred = credentials.Certificate("serviceAccountKey.json")
+    initialize_app(cred)
+
+@app.route("/proactive", methods=["POST"])
+def proactive():
+    try:
+        jsonRequest = request.get_json()
+        use_case = jsonRequest["use-case"]
+        text = jsonRequest["text"]
+    except TypeError:
+        return jsonify({"error": "Wrong request body!"}), 400
+
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title="New message from {}".format(use_case),
+            body=text,
+        ),
+        topic="proactive",
+    )
+
+    # Send a message to devices subscribed to the combination of topics
+    # specified by the provided condition.
+    response = messaging.send(message)
+    # Response is a message ID string.
+    return jsonify({ "result": 'Successfully sent message: "{}"'.format(response)})
 
 
 @app.route("/trigger", methods=["POST"])

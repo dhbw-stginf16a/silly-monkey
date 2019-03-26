@@ -5,7 +5,7 @@ RUN adduser -D trigger-router
 WORKDIR /home/trigger-router
 
 # Flask and requests dependencies
-RUN apk add gcc musl-dev libffi-dev openssl-dev
+RUN apk add gcc g++ musl-dev libffi-dev openssl-dev
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
