@@ -189,9 +189,15 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
+<<<<<<< HEAD
   answerObj = "Alright I will check the conditions for you... " + calendarString + weatherString + airString;
   // console.log(controlObject);
   res.send(answerObj);
+=======
+  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + airString;
+  console.log(controlObject);
+  res.send({"answer": answerObj});
+>>>>>>> 893f2ebe141da99912be7a0cc1df7fc62695a3b1
 })
 
 app.listen(port, () => console.log(`Personal Trainer Use Case listening on port ${port}!`))

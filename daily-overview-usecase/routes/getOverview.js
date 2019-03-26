@@ -12,8 +12,8 @@ const calenderAdapter = "http://calendar-adapter:5002/calendar";
 const calenderMeetings = "http://calendar-adapter:5002/calendar/getMockCalendar";
 const pollenAdapter = "http://pollen-adapter:5003/getPollen";
 
-router.post('/', async (req, response) => {
-    if(req.body.key == "overview") {
+router.get('/', async (req, response) => {
+    if(req.query.type === undefined || req.query.type == "overview") {
         var locationResponse;
         var trainResponse;
         var trainHomeStation;
@@ -76,8 +76,10 @@ router.post('/', async (req, response) => {
                 "location": locationResponse.data.value.location,
                 "country": "de"
             });
+            console.log("foo");
+            console.log(weatherResponse);
 
-            weather = weatherResponse.data.weather[0].description + " at " + (weatherResponse.data.main.temp - 273.15).toFixed(2) + "°C";
+            weather = weatherResponse.data.weather[0].description + " at " + (weatherResponse.data.main.temp - 273.15).toFixed(2) + "degrees celsius";
 
 
             //verkehr
@@ -139,15 +141,15 @@ router.post('/', async (req, response) => {
         }
 
 
-        response.send("the weather at your location " + homeLocation +
+        response.send({"answer": "the weather at your location " + homeLocation +
             " is currently " + weather +
             ". At your preferred station " + trainHomeStation +
             " " + trainInfo +
             " " + trafficInfo +
             feinstaubInfo +
-            "last but not least, today you've got the following meetings. " + meetingOverview);
+            "last but not least, today you've got the following meetings. " + meetingOverview});
 
-    }else if(req.body.key == "meetings"){
+    }else if(req.query.type == "meetings"){
         //calendar
         try {
             calenderMeetingsResponse = await axios(calenderMeetings);
@@ -185,10 +187,10 @@ router.post('/', async (req, response) => {
         }
 
 
-        response.send("today you've got the following meetings. " + meetingOverview);
+        response.send({"answer": "today you've got the following meetings. " + meetingOverview});
 
 
-    }else if(req.body.key == "traffic"){
+    }else if(req.query.type == "traffic"){
         var trainResponse;
         var trainHomeStation;
         var homeLocation;
@@ -246,9 +248,9 @@ router.post('/', async (req, response) => {
         }
 
 
-        response.send("At your preferred station " + trainHomeStation +
+        response.send({"answer": "At your preferred station " + trainHomeStation +
             " " + trainInfo +
-            " " + trafficInfo);
+            " " + trafficInfo});
 
 
     }

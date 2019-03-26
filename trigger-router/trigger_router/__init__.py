@@ -3,7 +3,7 @@ import json
 from flask import Flask, request, jsonify
 import redis
 
-from .callers import callHomeOffice, callPersonalTrainer, callGoodmorning
+from .callers import callHomeOffice, callPersonalTrainer, callGoodmorning, callDailyOverview
 
 
 app = Flask(__name__)
@@ -32,6 +32,8 @@ def genericTrigger():
         return callPersonalTrainer(parameters)
     elif trigger == "GoodMorning":
         return callGoodmorning(parameters)
+    elif trigger == "DailyOverview":
+        return callDailyOverview(parameters)
     else:
         return "Trigger '{}' was triggered, but we don't know how to handle it!".format(trigger)
 

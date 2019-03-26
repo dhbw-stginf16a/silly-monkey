@@ -70,6 +70,11 @@ services:
     image: johnazoidberg/sm-daily-overview-usecase
     expose:
      - 5013
+  homeoffice-usecase:
+    build: ./homeoffice-usecase
+    image: johnazoidberg/sm-homeoffice-usecase
+    expose:
+     - 5014
 volumes:
   db-data:
     driver: local

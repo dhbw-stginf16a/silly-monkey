@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use('/getOverview', getOverview);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!3');
+    res.send('Hello World!');
 });
 
 
@@ -17,4 +17,4 @@ app.listen(port, () => {
     console.log('app listening on port 5013!');
 });
 
-module.exports = app; 
+module.exports = app;
