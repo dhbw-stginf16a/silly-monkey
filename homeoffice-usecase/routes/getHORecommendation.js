@@ -16,16 +16,26 @@ router.get('/', async (req, res) => {
     const pollenPref = axios(`${dbConnectionViaTriggerRouter}/pollen`);
     const homeStation = axios(`${dbConnectionViaTriggerRouter}/homeStation`);
 
+    const pollenPrefString = (await pollenPref).data.value.pollen.join(', ');
+    const regionPref = (await region).data.value.region;
+    const roadsPref = (await roads).data.value.roads;
+    const homeStationPref = (await homeStation).data.value.homeStation;
+
     // get info from adapters
     const feinstaub = axios(feinstaubAdapter);
-    const pollen = axios(`${pollenAdapter}?pollen=${(await pollenPref).data.value.pollen.join(', ')}&place=${(await region).data.value.region}`);
-    const traffic = axios(`${trafficAdapter}?streets=${(await roads).data.value.favRoads.join(', ')}`);
-    const vvs = axios(`${vvsAdapter}?stationname=${(await homeStation).data.value.homeStation}`);
+    const pollen = axios(`${pollenAdapter}?pollen=${pollenPrefString}&place=${regionPref}`);
+    const traffic = axios(`${trafficAdapter}?streets=${roadsPref}`);
+    const vvs = axios(`${vvsAdapter}?stationname=${homeStationPref}`);
+
+    const feinstaubData = (await feinstaub).data.isAlarm;
+    const pollenData = (await pollen).data;
+    const trafficData = (await traffic).data;
+    const vvsData = (await vvs).data;
 
     let decision = {};
     // for all things taken into account: true -> pro home office || false -> contra home office
     // check train delays
-    const delays = ((await vvs).data).filter((departure) => departure.delay > 10);
+    const delays = vvsData.filter((departure) => departure.delay > 10);
     if (delays.length > 5) {
         decision.train = true;
     } else {
@@ -33,14 +43,13 @@ router.get('/', async (req, res) => {
     }
 
     // check feinstaub
-    if (((await feinstaub).data.isAlarm) === true) {
+    if (feinstaubData) {
         decision.feinstaub = true;
     } else {
         decision.feinstaub = false;
     }
 
     // check pollen count
-    const pollenData = (await pollen).data
     Object.keys(pollenData).forEach((key) => {
         if (pollenData[key].today >= 2) {
             decision.pollen = true;
@@ -49,7 +58,7 @@ router.get('/', async (req, res) => {
         }
     });
 
-    const trafficMessages = ((await traffic).data).filter((element) => element.direction.indexOf('Richtung Stuttgart') > -1);
+    const trafficMessages = trafficData.filter((element) => element.direction.indexOf('Richtung Stuttgart') > -1);
     if (trafficMessages > 1) {
         decision.traffic = true;
     } else {
