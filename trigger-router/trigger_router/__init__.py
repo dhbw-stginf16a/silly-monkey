@@ -18,7 +18,7 @@ def page_not_found(e):
         }), 404
 
 
-@app.before_request
+@app.before_first_request
 def init_db_connection():
     cred = credentials.Certificate("/home/trigger-router/trigger_router/serviceAccountKey.json")
     initialize_app(cred)
