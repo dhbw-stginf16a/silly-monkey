@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +21,9 @@ import android.widget.TextView;
 import android.widget.ThemedSpinnerAdapter;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.nuance.dragon.toolkit.core.data.Data;
 import com.nuance.dragon.toolkit.edr.internal.jni.StringArray;
 import com.nuance.speechkit.Audio;
@@ -94,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
         initButtonListener();
 
+
+
+        //Subscribe for FCM
+        FirebaseMessaging.getInstance().subscribeToTopic("proactive");
 
     }
 
