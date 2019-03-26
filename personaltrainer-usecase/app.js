@@ -36,7 +36,7 @@ app.get('/whatTraining', async (req, res) => {
 
   var weatherDescription;
   var weatherTemp; 
-  var todayNow = Date.now();
+  var todayNow = new Date(new Date().getTime())
   try {
     weatherHomeNowResponse = await axios.post(weatherAdapter, {
       "time": todayNow,
@@ -118,9 +118,9 @@ app.get('/whatTraining', async (req, res) => {
   function weatherCheck(desc, temp) {
     let lookupValue = "rain";
     if(desc.toLowerCase().indexOf(lookupValue) === -1) {
-      weatherString = "No rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+      weatherString = "It does not rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
     } else {
-      weatherString = "Rainy and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+      weatherString = "Oh, it rains and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
     }
   }
 
@@ -189,8 +189,8 @@ app.get('/whatTraining', async (req, res) => {
     } 
   }
 
-  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + airString;
-  console.log(controlObject);
+  answerObj = "Alright I will check the conditions for you... " + calendarString + weatherString + airString;
+  // console.log(controlObject);
   res.send(answerObj);
 })
 
