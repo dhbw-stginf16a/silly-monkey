@@ -118,9 +118,9 @@ app.get('/whatTraining', async (req, res) => {
   function weatherCheck(desc, temp) {
     let lookupValue = "rain";
     if(desc.toLowerCase().indexOf(lookupValue) === -1) {
-      weatherString = "No rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+      weatherString = "No rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "degrees celsius" + " ";
     } else {
-      weatherString = "Rainy and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
+      weatherString = "Rainy and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "degrees celsius" + " ";
     }
   }
 
