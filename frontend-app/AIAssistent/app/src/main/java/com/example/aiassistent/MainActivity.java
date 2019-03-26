@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             trigger_reg.put("trigger", new JSONObject()
                     .put("type", "GoodMorning")
                     .put("parameters", new JSONObject()
-                            .put("key", key)));
+                            .put("type", key)));
         } catch (Exception ex){
 
         }
