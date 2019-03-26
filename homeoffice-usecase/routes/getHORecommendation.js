@@ -11,25 +11,16 @@ const dbConnectionViaTriggerRouter = 'http://trigger-router:5000/database';
 
 router.get('/', async (req, res) => {
     // get preferences
-    // TODO: handle await stuff
     const region = axios(`${dbConnectionViaTriggerRouter}/region`);
-    // console.log(`region: ${region}`);
     const roads = axios(`${dbConnectionViaTriggerRouter}/favRoads`);
-    // console.log(`roads: ${roads}`);
     const pollenPref = axios(`${dbConnectionViaTriggerRouter}/pollen`);
-    // console.log(`pollen: ${pollenPref}`);
     const homeStation = axios(`${dbConnectionViaTriggerRouter}/homeStation`);
-    // console.log(`homeStation: ${homeStation}`);
 
     // get info from adapters
     const feinstaub = axios(feinstaubAdapter);
-    // console.log(`feinstaub: ${feinstaub}`);
     const pollen = axios(`${pollenAdapter}?pollen=${(await pollenPref).data.value.pollen.join(', ')}&place=${(await region).data.value.region}`);
-    // console.log(pollen);
     const traffic = axios(`${trafficAdapter}?streets=${(await roads).data.value.favRoads.join(', ')}`);
-    // console.log(traffic);
     const vvs = axios(`${vvsAdapter}?stationname=${(await homeStation).data.value.homeStation}`);
-    // console.log(vvs);
 
     let decision = {};
     // for all things taken into account: true -> pro home office || false -> contra home office
@@ -67,6 +58,8 @@ router.get('/', async (req, res) => {
     
     
     // feinstaub + delays => home office
+    // feinstaub + pollen => home office
+    // feinstaub only => no home office
     if (decision.feinstaub) {
         if (decision.train) {
             res.send({ answer: 'As there is an air quality warning active and there seem to be an awful lot of delayed trains today, I recommend that you stay at home today.' });
@@ -76,6 +69,8 @@ router.get('/', async (req, res) => {
             res.send({ answer: 'As there is an air quality warning active but the trains seem to be on time and the pollen count is rather low, I would recommend that you go to your office today.' }); 
         }
     } else {
+        // bad traffic + delays => home office
+        // bad traffic only => no home office, take train
         if (decision.traffic) {
             if (decision.train) {
                 res.send({ answer: 'As there is a lot of traffic on your preferred roads and the trains seem to have a lot of delays today, I recommend that you stay at home today.' });
@@ -83,6 +78,8 @@ router.get('/', async (req, res) => {
                 res.send({ answer: 'As there is a lot of traffic on your preferred roads today, I recommend that you go to your office by train today.' });
             }
         } else {
+            // good traffic + pollen => home office, but warning about pollen
+            // good traffic, no pollen, no feinstaub => enthusiastic response about going to work
             if (decision.pollen) {
                 res.send({ answer: 'As there is not a lot of traffic on your preferred roads, I recommend that you go to your office today. Be mindful of the high pollen count, though!' });
             } else {
