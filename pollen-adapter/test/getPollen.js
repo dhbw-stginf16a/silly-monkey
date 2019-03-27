@@ -29,9 +29,7 @@ describe('Pollen Adapter', () => {
                     }
 
                     Object.keys(res.body).forEach((key) => {
-                        res.body[key].should.have.property('today');
-                        res.body[key].should.have.property('tomorrow');
-                        res.body[key].should.have.property('dayafter_to');
+                        res.body[key].should.have.all.keys('today', 'tomorrow', 'dayafter_to');
                     });
                 });
         });
