@@ -6,4 +6,7 @@ node_modules/
 .settings/
 .project
 .DS_Store
+
+# Secrets
 serviceAccountKey.json
+google-services.json

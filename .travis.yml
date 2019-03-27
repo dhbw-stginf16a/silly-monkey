@@ -34,9 +34,13 @@ matrix:
         - travis-test
 env:
   global:
-    - secure: M8r9Y/qfXGG/kWPYx3zi/d5jGXFI0LiX8077pa8hTa8+YxJ9VcihQdvJkjw5xCVzVxJl106cyRqCAc2D2ANTAVYc7Z1/mK5aCK5HOCzvgN7ZtXWU8kyRlwNpLqEcEhzmMZ6B9DZnuYBiAUczxaePze5zT464ZApe/eObRhaZzp4iZuA5udwKZdxlqluh57+WEmeMo40QF8WBw4XrmaVePaFlTmAKd1wYoLk40K/c7fVXtOKbaKTK2qFGTrnkruvYNgaaFjIJ8OYk+2PU3qkCJSVZhLQpcwFcuFP2ExNjLeXSwF7Mmw0y068CJ6hBt8AbUoonaJ0qzjtb1BV/tzz2fafrPjHPLzGlqWn8DBSEN6RGEi6ZAA0qLJrJpR+FGtL8r2FdAhNseKhHRnuZ3UGVLrgMePf/2nl5Z1eDuq3EUw3qRld1uyyO6RxRYkG3R9Y8aIOGJYkYi/P3GceZ3/h0LaNo2YyEobRTJWPlgZwHxk6gDZnA9kFVoO9eKbKcEcgjq96Lvt+TaU7HeqPbzSKXg4ttKYyOISqEe94t2tjAFfl0qwnGX8V+bhrR5LQm9C40WQ0re39aL/Czs3lc8lWfQk0o7rgJtWASXUFJEhzl6+KtTPx2X10Ps3TKOyXufJs+he912dXrk3zwG9ccK1bi4j/WjvwpgpgG0DmTVH2CrE4=
-    - DOCKER_USERNAME: johnazoidberg
+  - secure: M8r9Y/qfXGG/kWPYx3zi/d5jGXFI0LiX8077pa8hTa8+YxJ9VcihQdvJkjw5xCVzVxJl106cyRqCAc2D2ANTAVYc7Z1/mK5aCK5HOCzvgN7ZtXWU8kyRlwNpLqEcEhzmMZ6B9DZnuYBiAUczxaePze5zT464ZApe/eObRhaZzp4iZuA5udwKZdxlqluh57+WEmeMo40QF8WBw4XrmaVePaFlTmAKd1wYoLk40K/c7fVXtOKbaKTK2qFGTrnkruvYNgaaFjIJ8OYk+2PU3qkCJSVZhLQpcwFcuFP2ExNjLeXSwF7Mmw0y068CJ6hBt8AbUoonaJ0qzjtb1BV/tzz2fafrPjHPLzGlqWn8DBSEN6RGEi6ZAA0qLJrJpR+FGtL8r2FdAhNseKhHRnuZ3UGVLrgMePf/2nl5Z1eDuq3EUw3qRld1uyyO6RxRYkG3R9Y8aIOGJYkYi/P3GceZ3/h0LaNo2YyEobRTJWPlgZwHxk6gDZnA9kFVoO9eKbKcEcgjq96Lvt+TaU7HeqPbzSKXg4ttKYyOISqEe94t2tjAFfl0qwnGX8V+bhrR5LQm9C40WQ0re39aL/Czs3lc8lWfQk0o7rgJtWASXUFJEhzl6+KtTPx2X10Ps3TKOyXufJs+he912dXrk3zwG9ccK1bi4j/WjvwpgpgG0DmTVH2CrE4=
+  - DOCKER_USERNAME: johnazoidberg
 before_install:
+- openssl aes-256-cbc -K $encrypted_0792f20bc84d_key -iv $encrypted_0792f20bc84d_iv
+  -in frontend-app/AIAssistent/app/google-services.json.enc
+  -out frontend-app/AIAssistent/app/google-services.json
+  -d
 - openssl aes-256-cbc -K $encrypted_0792f20bc84d_key -iv $encrypted_0792f20bc84d_iv
   -in frontend-app/AIAssistent/app/src/main/java/com/example/aiassistent/Configuration.java.enc
   -out frontend-app/AIAssistent/app/src/main/java/com/example/aiassistent/Configuration.java
