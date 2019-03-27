@@ -1,8 +1,8 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const axios = require('axios');
 
 const app = require('../app');
-const getPreferences = require('./util');
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -11,7 +11,8 @@ describe('Traffic Adapter', () => {
     describe('/GET correct and usable traffic info', () => {
         let roadsPref = [];
         before(async () => {
-            roadsPref = await getPreferences();
+            const roadsPrefPromise = axios('http://localhost:5000/database/favRoads');
+            roadsPref = (await roadsPrefPromise).data.value.favRoads;
         });
 
         it('should have status code 200', (done) => {
