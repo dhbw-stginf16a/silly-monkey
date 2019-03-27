@@ -12,6 +12,15 @@ matrix:
     - docker run $DOCKER_USERNAME/sm-api-test
     env:
     - secure: lBsJaI6EUq+lk6ByttG71RAOgzXpT3GvXpeD05OEDJwOFJw+BjlgmLA/Jeh6lRv7BZOJR5NGGk/tjsdMeN86M8+SLVkp7n5nW8Nhir66T2JvEWMQ3yfvGWv+UWaNVM0Oe/nsf9K2mMXlUKGmNPty1D+2q7D1kw3QXIQo6+IMSVo0e0jJgN1sBbgKFswohfbosBmlATBGayxYHxGYg+JFao3duPC183kt2Ar2iMTdkzKCITK07AbLH/gCBgxKnNHhz5ivpPzetQc9+IzdZY3Pi8dWMo/4PeKKap8mW6JHBgIR4BwwfI8iVnuZ63oKrw9OueXA1ikVNOZW3S2WOsIBf2AQJpf4MPHpceYhCohgkTFfiao9i4xhrkmGpCrbgKgjKUvKQUn8Gl50bcYaj228owZpQ3xDChb4w08SzS92BfgsdbxGQLE66ZbZ6lualfd1IwrtKdFq5Jv/L1njubiJXXdCdxzBA+nthI7NjfT2d5H2t3PVeiq5q3A9u1UE/LArPDlzLGTqj6bcT3Cp3X8hEiC+nOciSvtrjhrM2a6Mr3XNfQHBDqZ1HDcCzT3JGnjMLGISkUo8u7/dVf3oAQaAHYay4LmV/rFI83yR+6/BVuH9FvdjC7UTyyc62bpNYC57DWxhOhME2MegrN+FHM46CZAiqJMQYJdNdC5MtCJ/CfQ=
+    deploy:
+      provider: script
+      skip_cleanup: true
+      script: ssh daniel@35.198.134.76 -i encrypted/google-cloud.privkey -o "UserKnownHostsFile infrastructure/google-hostkey" bash
+        < infrastructure/deploy.sh
+      on:
+        branch:
+        - travis-test
+        - master
   - language: android
     android:
       components:
@@ -38,10 +47,7 @@ env:
   - DOCKER_USERNAME: johnazoidberg
 before_install:
 - openssl aes-256-cbc -K $encrypted_0792f20bc84d_key -iv $encrypted_0792f20bc84d_iv
-  -in frontend-app/AIAssistent/app/google-services.json.enc
-  -out frontend-app/AIAssistent/app/google-services.json
-  -d
-- openssl aes-256-cbc -K $encrypted_0792f20bc84d_key -iv $encrypted_0792f20bc84d_iv
-  -in frontend-app/AIAssistent/app/src/main/java/com/example/aiassistent/Configuration.java.enc
-  -out frontend-app/AIAssistent/app/src/main/java/com/example/aiassistent/Configuration.java
-  -d
+  -in infrastructure/encrypted.tar.gz.enc -out infrastructure/encrypted.tar.gz -d
+- tar xf infrastructure/encrypted.tar.gz
+- mv encrypted/Configuration.java frontend-app/AIAssistent/app/src/main/java/com/example/aiassistent/Configuration.java
+- mv encrypted/google-services.json frontend-app/AIAssistent/app/google-services.json

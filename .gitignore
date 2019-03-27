@@ -10,3 +10,5 @@ node_modules/
 # Secrets
 serviceAccountKey.json
 google-services.json
+google-cloud.privkey
+infrastructure/encrypted.tar.gz
