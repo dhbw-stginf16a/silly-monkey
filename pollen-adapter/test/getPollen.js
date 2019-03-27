@@ -10,8 +10,8 @@ chai.use(chaiHttp);
 describe('Pollen Adapter', () => {
     describe('/GET pollen info', () => {
         it('should GET the pollen info', async () => {
-            const pollenPrefPromise = axios('http://localhost:5000/database/pollen');
-            const regionPrefPromise = axios('http://localhost:5000/database/region');
+            const pollenPrefPromise = axios('http://trigger-router:5000/database/pollen');
+            const regionPrefPromise = axios('http://trigger-router:5000/database/region');
             const pollenPref = (await pollenPrefPromise).data.value.pollen;
             const regionPref = (await regionPrefPromise).data.value.region;
 
