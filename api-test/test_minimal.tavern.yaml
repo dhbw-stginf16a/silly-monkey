@@ -51,3 +51,13 @@ stages:
           parameters: {}
     response:
       status_code: 200
+  - name: Test homeoffice-usecase
+    request:
+      url: https://silly-monkey.danielschaefer.me/triggerRouter/trigger
+      method: POST
+      json:
+        trigger:
+          type: HomeOffice
+          parameters: {}
+    response:
+      status_code: 200

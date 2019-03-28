@@ -18,5 +18,5 @@ def callGoodmorning(parameters):
 
 def callDailyOverview(parameters):
     res = requests.get("http://daily-overview-usecase:5013/getOverview", json={},
-            params={"type": "overview"}).json()
+            params=parameters).json()
     return jsonify({"answer": res["answer"]})
