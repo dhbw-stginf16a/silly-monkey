@@ -83,19 +83,6 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-
-  let answerStr = "I'm not quite sure";
-  let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
-  let checkCalendar = calendarResponse.data.events;
-  
-  let timeTest = new Date(new Date().setHours(13,0,0)).valueOf();
-  let endTime = new Date(new Date().setHours(23,59,59));
-  let freeTime = 3600000;
-  let a; 
-
-  let calendarString;
-  let airString;
-
   /* let controlObject = {
     'pollen' : pollenActivityOfThatRegion.data ,
     'feinstaub' : isFeinstaubAlarm,
@@ -106,7 +93,6 @@ app.get('/whatTraining', async (req, res) => {
     'time' : todayNow,
     'allergies' : allergies
   }; */
-  
 
   let weatherString;
   weatherCheck(weatherDescription, weatherTemp);
@@ -118,6 +104,14 @@ app.get('/whatTraining', async (req, res) => {
       weatherString = "Oh, it rains and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
     }
   }
+
+  /////// Check calendar for timeslots ///////
+  let timeTest = new Date(new Date().setHours(13,0,0)).valueOf();
+  let endTime = new Date(new Date().setHours(23,59,59));
+  let freeTime = 3600000;
+  let a; 
+  let calendarString;
+  let checkCalendar = calendarResponse.data.events;
 
   calenderCheck(timeNow, checkCalendar, freeTime, endTime);
   function calenderCheck(startFrom, calendar, freeTime, endTime) {
@@ -167,24 +161,32 @@ app.get('/whatTraining', async (req, res) => {
     } 
   } 
 
-  /////// Allergy check ///////
-  var allergyString = "Very nice, there is not a high density of pollen today!";
-  listAllergies();
-   function listAllergies() {
+  /////// Air check (Pollen and Feinstaub)///////
+  var allergyString = "I have good news: the air outside is free of pollen! ";
+  var feinstaubString = "";
+  allergyCheck(feinstaubResponse.data.isAlarm);
+   function allergyCheck(isFeinstaubAlarm) {
     var i = 0;
     var a = -1;
     var allergy;
     for (var i=0; i < pollenActivity.data.value.pollen.length; i++) {
+      // get density of each pollen which are stored in database
       allergy = pollenActivityOfThatRegion.data[pollenActivity.data.value.pollen[i]]
+      console.log(allergy);
       if (allergy.today >= 2) {
         a = i;
         allergyString = "You should consider to stay inside due to the high density of " + pollenActivity.data.value.pollen[a];
-        break
+        break;
       } 
+
+      if (isFeinstaubAlarm) {
+        feinstaubString = "But be aware that there is a high density of particulates outside."
+        break;
+      }
     } 
   } 
 
-  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + allergyString; // + airString;
+  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + allergyString + feinstaubString;
   //console.log(controlObject);
   res.send({"answer": answerObj});
 })
