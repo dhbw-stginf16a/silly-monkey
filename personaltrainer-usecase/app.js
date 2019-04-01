@@ -13,10 +13,16 @@ const weatherAdapter = "http://wetter-adapter:5004/getWeather";
 
 app.get('/whatTraining', async (req, res) => {
 
+  var region;
+  var pollenActivity;
   var locationResponse;
   var regionResponse;
   let timeNow = new Date(new Date().getTime());
   try {
+    //get region of pollen
+    region = await axios(dbConnectionViaTriggerRouter + "/region");
+    //get Pollen of that region
+    pollenActivity = await axios(dbConnectionViaTriggerRouter + "/pollen");
     // for Wetter Adapter - "Stuttgart"
     locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
     // for Feinstaub Adapter - "Oberrhein und unteres Neckartal"
@@ -33,6 +39,21 @@ app.get('/whatTraining', async (req, res) => {
       "error": error.message
     })
   }
+  const pollenActivityString = (await pollenActivity).data.value.pollen.join(', ');
+  const regionOfPollen = (await region).data.value.region;
+
+  var pollenActivityOfThatRegion;
+  try {
+    pollenActivityOfThatRegion = await axios (pollenAdapter, {params: {
+      "pollen": pollenActivityString,
+      "place":regionOfPollen
+    }});
+  } catch (error) {
+    console.log(error.message)
+    res.send({
+      "error": error.message
+    })
+  } 
 
   var weatherDescription;
   var weatherTemp; 
@@ -62,35 +83,8 @@ app.get('/whatTraining', async (req, res) => {
     })
   }
 
-  var pollenErleResponse;
-  try {
-    pollenErleResponse = await axios(pollenAdapter, {params: {
-      "pollen": "Erle",
-      "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
-    }});
-  } catch (error) {
-    console.log(error.message)
-    res.status(500).send({
-      "error": error.message
-    })
-  }
-
-  var pollenGraeserResponse;
-  try {
-    pollenGraeserResponse = await axios(pollenAdapter, {params: {
-      "pollen": "Graeser",
-      "place": "Hohenlohe/mittlerer Neckar/Oberschwaben"
-    }});
-  } catch (error) {
-    console.log(error.message)
-    res.status(500).send({
-      "error": error.message
-    })
-  }
 
   let answerStr = "I'm not quite sure";
-  let isErlenPollen = pollenErleResponse.data.Erle.today ;
-  let isGraeserPollen = pollenGraeserResponse.data.Graeser.today ;
   let isFeinstaubAlarm = feinstaubResponse.data.isAlarm;
   let checkCalendar = calendarResponse.data.events;
   
@@ -102,31 +96,26 @@ app.get('/whatTraining', async (req, res) => {
   let calendarString;
   let airString;
 
-  let controlObject = {
-    /* 'erle' : isErlenPollen,
-    'graeser' : isGraeserPollen,
+  /* let controlObject = {
+    'pollen' : pollenActivityOfThatRegion.data ,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar , */
+    'calender' : checkCalendar , 
     'location' : locationResponse.data.value.location, 
     'Temperature' : weatherTemp,
     'Weather Description' : weatherDescription,
-    'time' : todayNow
-  };
+    'time' : todayNow,
+    'allergies' : allergies
+  }; */
+  
 
   let weatherString;
   weatherCheck(weatherDescription, weatherTemp);
   function weatherCheck(desc, temp) {
     let lookupValue = "rain";
     if(desc.toLowerCase().indexOf(lookupValue) === -1) {
-<<<<<<< HEAD
       weatherString = "It does not rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
     } else {
       weatherString = "Oh, it rains and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "°C" + " ";
-=======
-      weatherString = "No rain and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "degrees celsius" + " ";
-    } else {
-      weatherString = "Rainy and the temperature at the moment is " + (temp - 273.15).toFixed(2) + "degrees celsius" + " ";
->>>>>>> 0e141441861f3d5f56eac5320c2dd1ff97183119
     }
   }
 
@@ -178,25 +167,25 @@ app.get('/whatTraining', async (req, res) => {
     } 
   } 
 
-  airCheck();
-  function airCheck() {
-      if (isErlenPollen >= 2 && isGraeserPollen >= 2){
-        airString = "Today is not a good day to go outside due to the extreme high density of Pollen.";
-    } else if (isErlenPollen < 2 && isGraeserPollen >= 2) {
-        airString = "Today is not a good day to go outside due to the extrem high density of Graeser.";
-    } else if (isErlenPollen >= 2 && isGraeserPollen < 2) {
-      airString = "Today is not a good day to go outside due to the extrem high density of Erle.";
-    } else {
-      if(isFeinstaubAlarm) {
-        airString = "The density of pollen is low today, but there is a high density of particulates. You better decide yourself.";
-      } else {
-        airString = "Today there are perfect conditions to go out for a run.";
-      }
+  /////// Allergy check ///////
+  var allergyString = "Very nice, there is not a high density of pollen today!";
+  listAllergies();
+   function listAllergies() {
+    var i = 0;
+    var a = -1;
+    var allergy;
+    for (var i=0; i < pollenActivity.data.value.pollen.length; i++) {
+      allergy = pollenActivityOfThatRegion.data[pollenActivity.data.value.pollen[i]]
+      if (allergy.today >= 2) {
+        a = i;
+        allergyString = "You should consider to stay inside due to the high density of " + pollenActivity.data.value.pollen[a];
+        break
+      } 
     } 
-  }
+  } 
 
-  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + airString;
-  console.log(controlObject);
+  answerObj = "Alright I will check the conditions for you. " + calendarString + weatherString + allergyString; // + airString;
+  //console.log(controlObject);
   res.send({"answer": answerObj});
 })
 
