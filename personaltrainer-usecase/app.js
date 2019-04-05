@@ -17,6 +17,8 @@ app.get('/whatTraining', async (req, res) => {
   var allergyString;
   var feinstaubString = "";
 
+  console.log(req.query.date);
+
   function calenderCheck(startFrom, calendar, freeTime, endTime) {
     // sort calendar by start time
     calendar.sort(function (a, b){ return a.start - b.start});
