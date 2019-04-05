@@ -87,7 +87,7 @@ app.get('/whatTraining', async (req, res) => {
         allergyString = "You should consider to stay inside due to the high density of " + pollenActivity.data.value.pollen[a];
         break;
       } else {
-        allergyString = "You need not to be afraid of sensitive pollen in the air. "
+        allergyString = "You need not consider sensitive pollen in the air. "
       }
 
       if (isFeinstaubAlarm) {
@@ -97,12 +97,13 @@ app.get('/whatTraining', async (req, res) => {
     } 
   } 
 
-  if(req.query.type === undefined || req.query.type == "today") {
+  if(req.query.type == "today") {
   var region;
   var pollenActivity;
   var locationResponse;
   var regionResponse;
   let timeNow = new Date(new Date().getTime());
+  let timeTomorrow = timeNow.valueOf() + 86400000;
   try {
     //get region of pollen
     region = await axios(dbConnectionViaTriggerRouter + "/region");
@@ -202,12 +203,48 @@ app.get('/whatTraining', async (req, res) => {
 
   } else if(req.query.type == "tomorrow"){
 
+    var region;
+    var pollenActivity;
+    var locationResponse;
+    var regionResponse;
+    let timeNow = new Date(new Date().getTime());
+    try {
+      //get region of pollen
+      region = await axios(dbConnectionViaTriggerRouter + "/region");
+      //get Pollen of that region
+      pollenActivity = await axios(dbConnectionViaTriggerRouter + "/pollen");
+      // for Wetter Adapter - "Stuttgart"
+      locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
+      calendarResponse = await axios(calenderAdapter);
+    } catch (error) {
+      console.log(error.message)
+      if(error.response.status == 404) {
+        res.status(500).send({
+          "error": "Location Eintrag nicht in der Datenbank"
+        })
+      } else 
+      res.status(500).send({
+        "error": error.message
+      })
+    }
+  
+    // Pollen API request according database entries of region and allergies 
+    const pollenActivityString = (await pollenActivity).data.value.pollen.join(', ');
+    const regionOfPollen = (await region).data.value.region;
+    var pollenActivityOfThatRegion;
+    try {
+      pollenActivityOfThatRegion = await axios (pollenAdapter, {params: {
+        "pollen": pollenActivityString,
+        "place":regionOfPollen
+      }});
+    } catch (error) {
+      console.log(error.message)
+      res.send({
+        "error": error.message
+      })
+    } 
+  
     console.log("He asked for tomorrow.");
-    var answerObj = "";
-    res.send({"answer": answerObj});
-
-  } else if(req.query.type == "next week"){
-    console.log("He asked for next week");
     var answerObj = "";
     res.send({"answer": answerObj});
 
