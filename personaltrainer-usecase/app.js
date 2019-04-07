@@ -156,7 +156,7 @@ app.get('/whatTraining', async (req, res) => {
     }
   }
 
-  if(req.query.date == "today") {
+  if(req.query.date == "today" || req.query.date == "now") {
   var region;
   var pollenActivity;
   var locationResponse;
