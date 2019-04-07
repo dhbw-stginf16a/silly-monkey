@@ -188,14 +188,14 @@ public class MainActivity extends AppCompatActivity {
                             //tts.speak("Say my name, David Guetta is the best. Let me hear ya", TextToSpeech.QUEUE_ADD, null);
                             //parse the action call
                             String action_call = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("action").getJSONObject("intent").getString("value");
-                            //JSONObject concepts = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("concepts");
+                            JSONObject concepts = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("concepts");
 
                             //http://35.198.134.76/triggerRouter/trigger
 
                             switch (action_call){
                                 case "getPersonalTrainer": {
-
-                                    getPersonalTrainer("now");
+                                    String time_value = concepts.getJSONArray("time_reference").getJSONObject(0).getString("value");
+                                    getPersonalTrainer(time_value);
                                     break;
                                 }
                                 case "getWelcome": {
