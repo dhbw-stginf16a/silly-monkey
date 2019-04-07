@@ -87,7 +87,14 @@ def database(key):
 
     value = r.get(key)
     if not value:
-        return jsonify({"error": "Key not found"}), 404
+        defaultSettings = {}
+        with open("database-defaults.json", "r") as f:
+            defaultSettings = json.load(f)
+
+        if key not in defaultSettings:
+            return jsonify({"error": "Key not found"}), 404
+
+        value = defaultSettings[key]
 
     return jsonify({"value": {
         key: json.loads(value.decode())

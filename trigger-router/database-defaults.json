@@ -1,5 +1,9 @@
 {
   "city": "Stuttgart",
-  "allergies": ["Hasel", "Erle"],
-  "region": "Hohenlohe/mittlerer Neckar/Oberschwaben"
+  "allergies": ["Graeser", "Erle"],
+  "region": "Hohenlohe/mittlerer Neckar/Oberschwaben",
+  "partRegion": "Hohenlohe/mittlerer Neckar/Oberschwaben",
+  "favRoads": "[A81, B464]",
+  "homeStation": "Böblingen",
+  "location": "Stuttgart"
 }
