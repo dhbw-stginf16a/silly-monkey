@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             config_req.put("setup", new JSONObject()
-                    .put(key, values));
+                    .put(key, new JSONArray(values)));
             Log.d("updateSetup", config_req.toString());
         } catch (Exception e){
             Log.d("ERROR_THREADRUN","Error in JSONObj Setup: " + e);
