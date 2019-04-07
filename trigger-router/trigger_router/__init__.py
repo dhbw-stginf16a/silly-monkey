@@ -64,6 +64,8 @@ def genericTrigger():
         return callGoodmorning(parameters)
     elif trigger == "DailyOverview":
         return callDailyOverview(parameters)
+    elif trigger == "WhatDidIMiss":
+        return callPersonalTrainer({})
     else:
         return "Trigger '{}' was triggered, but we don't know how to handle it!".format(trigger)
 
