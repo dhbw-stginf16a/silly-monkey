@@ -71,6 +71,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                if(menuItem.getTitle().equals("Settings")){
+
+                    checkSetupStatus();
+
+
+                }else{
+                    Log.d("Toolbar", "This is: " + menuItem.getTitle());
+                }
+                return true;
+            }
+        });
 
         mainTV = (TextView) findViewById(R.id.txtVO);
 
@@ -94,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         //Setup the Assistent if needed
 
 
-        checkSetupStatus();
 
         initButtonListener();
 
@@ -164,6 +177,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        FloatingActionButton stop_speech = findViewById(R.id.stop_speak);
+        stop_speech.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Log.d("BTN_StopTSS", "Trying to stop TTS");
+                try{
+                    tts.stop();
+                }catch (Exception ex){
+                    Log.d("BTN_StopTSS", "Unable to stop " + ex);
+                }
+
+            }
+        });
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,15 +214,19 @@ public class MainActivity extends AppCompatActivity {
                             //tts.speak("Say my name, David Guetta is the best. Let me hear ya", TextToSpeech.QUEUE_ADD, null);
                             //parse the action call
                             String action_call = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("action").getJSONObject("intent").getString("value");
-                            JSONObject concepts = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("concepts");
 
                             //http://35.198.134.76/triggerRouter/trigger
 
                             switch (action_call){
                                 case "getPersonalTrainer": {
-                                    String time_value = concepts.getJSONArray("time_reference").getJSONObject(0).getString("value");
+                                    JSONObject concepts = interpret_result.getJSONArray("interpretations").getJSONObject(0).getJSONObject("concepts");
+                                    String time_value = concepts.getJSONArray("time_reference").getJSONObject(0).getString("literal");
+                                    if(time_value=="now"){ time_value = "today"; }; // I dont want to talk about it
                                     getPersonalTrainer(time_value);
                                     break;
+                                }
+                                case "getMissed":{
+                                    getPersonalTrainer("today");                                    break;
                                 }
                                 case "getWelcome": {
                                     getWelcome();
@@ -279,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
             trigger_reg.put("trigger", new JSONObject()
                     .put("type", "PersonalTrainer")
                     .put("parameters", new JSONObject()
-                            .put("time", time)));
+                            .put("date", time)));
         } catch (Exception ex){
 
         }
@@ -298,7 +328,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             trigger_reg.put("trigger", new JSONObject()
-                    .put("type", "GoodMorning"));
+                    .put("type", "GoodMorning")
+                    .put("parameter", new JSONObject()));
         } catch (Exception ex){
 
         }
@@ -318,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             trigger_reg.put("trigger", new JSONObject()
-                    .put("type", "GoodMorning")
+                    .put("type", "DailyOverview")
                     .put("parameters", new JSONObject()
                             .put("type", key)));
         } catch (Exception ex){
@@ -338,7 +369,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             trigger_reg.put("trigger", new JSONObject()
-                    .put("type", "HomeOffice"));
+                    .put("type", "HomeOffice")
+                    .put("parameters", new JSONObject()));
         } catch (Exception ex){
 
         }
@@ -351,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
     }
+
 
     private void setSetup(List<String> missing_key_list){
         if(missing_key_list.size() == 0){
@@ -418,8 +451,38 @@ public class MainActivity extends AppCompatActivity {
                                     }
 
                                     //Update the backend with an HTTP Request and the missing information
-                                    updateSetup(missing_information_list, missing_key);
 
+
+                                    if(missing_key.equals("city")){
+                                        if(missing_information_list.contains("Stuttgart")) {
+                                            updateSetup("Stuttgart", "city");
+                                            updateSetup("Stuttgart", "location");
+
+                                            updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "partRegion");
+                                            updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "region");
+                                        }else if(missing_information_list.contains("Berlin")) {
+                                            updateSetup("Berlin", "city");
+                                            updateSetup("Berlin", "location");
+
+                                            updateSetup("Brandenburg und Berlin", "partRegion");
+                                            updateSetup("Brandenburg und Berlin", "region");
+                                        }else if(missing_information_list.contains("Munich")) {
+                                            updateSetup("Munich", "city");
+                                            updateSetup("Munich", "location");
+
+                                            updateSetup("Allgäu/Oberbayern/Bay. Wald", "partRegion");
+                                            updateSetup("Allgäu/Oberbayern/Bay. Wald", "region");
+                                        }else if(missing_information_list.contains("Frankfurt")) {
+                                            updateSetup("Frankfurt", "city");
+                                            updateSetup("Frankfurt", "location");
+
+                                            updateSetup("Rhein-Main", "partRegion");
+                                            updateSetup("Rhein-Main", "region");
+                                        }
+
+                                    }else {
+                                        updateSetup(missing_information_list.toString(), missing_key);
+                                    }
 
                                 }
 
@@ -456,14 +519,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateSetup(List<String> values, String key){
+    private void updateSetup(String values, String key){
         mainTV.setText(values.toString() + " Key; " + key);
 
         final JSONObject config_req = new JSONObject();
 
         try {
             config_req.put("setup", new JSONObject()
-                    .put(key, new JSONArray(values)));
+                    .put(key, values));
             Log.d("updateSetup", config_req.toString());
         } catch (Exception e){
             Log.d("ERROR_THREADRUN","Error in JSONObj Setup: " + e);
@@ -499,7 +562,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try{
-
+/*
                         HttpURLConnection con = (HttpURLConnection) ( new URL("https://silly-monkey.danielschaefer.me/triggerRouter/setup")).openConnection();
                         con.setRequestMethod("GET");
                         con.getResponseCode();
@@ -529,6 +592,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        */
+                        //We now just override keys, no need to fetch unset ones
+
+                        List<String> list = new ArrayList<String>();
+                        list.add("allergies");
+                        list.add("city");
                         setSetup(list);
 
 /*                        if(list.size() > 0){
