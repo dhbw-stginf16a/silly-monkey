@@ -95,7 +95,9 @@ def database(key):
             return jsonify({"error": "Key not found"}), 404
 
         value = defaultSettings[key]
+    else:
+        value = json.loads(value.decode())
 
     return jsonify({"value": {
-        key: json.loads(value.decode())
+        key: value
     }}), status_code
