@@ -51,6 +51,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -329,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             trigger_reg.put("trigger", new JSONObject()
                     .put("type", "GoodMorning")
-                    .put("parameter", new JSONObject()));
+                    .put("parameters", new JSONObject()));
         } catch (Exception ex){
 
         }
@@ -432,7 +433,6 @@ public class MainActivity extends AppCompatActivity {
                             String action_call = first_interpretation.getJSONObject("action").getJSONObject("intent").getString("value");
                             Double confidence = Double.parseDouble(first_interpretation.getJSONObject("action").getJSONObject("intent").getString("confidence"));
                             //The response from the User made sense and is possible an answer to our question
-                            Log.d("setSetup", "Confidence; " + confidence + "Action Call: " + action_call);
 
                             if(action_call.equals("getSetup") && confidence.compareTo(0.80) == 1){
                                 Log.d("setSetup", "Action call and confidence confirmed");
@@ -440,50 +440,70 @@ public class MainActivity extends AppCompatActivity {
                                 JSONObject concepts = first_interpretation.getJSONObject("concepts");
 
                                 JSONArray missing_key_concept = concepts.getJSONArray(missing_key);
-                                Log.d("setSetup", "missing_key_concept values" + missing_key_concept);
+                                Log.d("setSetup", "missing_key_concept values" + first_interpretation);
 
                                 if(missing_key_concept != null){
                                     //get Info Values and Package it into an array to send to trigger router
                                     List<String> missing_information_list = new ArrayList<String>();
                                     for(int i = 0; i < missing_key_concept.length(); i++){
-                                        String kc = missing_key_concept.getJSONObject(i).getString("value");
+                                        String kc = missing_key_concept.getJSONObject(i).getString("literal");
                                         missing_information_list.add(kc);
                                     }
-
+                                    Log.d("SETUP", missing_key + " " + missing_information_list);
                                     //Update the backend with an HTTP Request and the missing information
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.d("SETUP","THREAD");
 
+                                            if (missing_key.equals("city")) {
+                                                if (missing_information_list.contains("Stuttgart")) {
+                                                    updateSetup("Stuttgart", "city");
+                                                    updateSetup("Stuttgart", "location");
 
-                                    if(missing_key.equals("city")){
-                                        if(missing_information_list.contains("Stuttgart")) {
-                                            updateSetup("Stuttgart", "city");
-                                            updateSetup("Stuttgart", "location");
+                                                    updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "partRegion");
+                                                    updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "region");
+                                                } else if (missing_information_list.contains("Berlin")) {
+                                                    updateSetup("Berlin", "city");
+                                                    updateSetup("Berlin", "location");
 
-                                            updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "partRegion");
-                                            updateSetup("Hohenlohe/mittlerer Neckar/Oberschwaben", "region");
-                                        }else if(missing_information_list.contains("Berlin")) {
-                                            updateSetup("Berlin", "city");
-                                            updateSetup("Berlin", "location");
+                                                    updateSetup("Brandenburg und Berlin", "partRegion");
+                                                    updateSetup("Brandenburg und Berlin", "region");
+                                                } else if (missing_information_list.contains("Munich")) {
+                                                    updateSetup("Munich", "city");
+                                                    updateSetup("Munich", "location");
 
-                                            updateSetup("Brandenburg und Berlin", "partRegion");
-                                            updateSetup("Brandenburg und Berlin", "region");
-                                        }else if(missing_information_list.contains("Munich")) {
-                                            updateSetup("Munich", "city");
-                                            updateSetup("Munich", "location");
+                                                    updateSetup("Allgäu/Oberbayern/Bay. Wald", "partRegion");
+                                                    updateSetup("Allgäu/Oberbayern/Bay. Wald", "region");
+                                                } else if (missing_information_list.contains("Frankfurt")) {
+                                                    updateSetup("Frankfurt", "city");
+                                                    updateSetup("Frankfurt", "location");
 
-                                            updateSetup("Allgäu/Oberbayern/Bay. Wald", "partRegion");
-                                            updateSetup("Allgäu/Oberbayern/Bay. Wald", "region");
-                                        }else if(missing_information_list.contains("Frankfurt")) {
-                                            updateSetup("Frankfurt", "city");
-                                            updateSetup("Frankfurt", "location");
+                                                    updateSetup("Rhein-Main", "partRegion");
+                                                    updateSetup("Rhein-Main", "region");
+                                                }
 
-                                            updateSetup("Rhein-Main", "partRegion");
-                                            updateSetup("Rhein-Main", "region");
+                                            } else if(missing_key.equals("allergies")) {
+                                                Hashtable<String,String> ht=new Hashtable<String,String>();
+                                                ht.put("alder", "Erle");
+                                                ht.put("ambrosia", "ambrosia");
+                                                ht.put("ash", "Asche");
+                                                ht.put("birch", "Birke");
+                                                ht.put("grasses", "Gräser");
+                                                ht.put("hazel", "Hasel");
+                                                ht.put("mugwort", "Beifuß");
+                                                ht.put("rye", "Roggen");
+
+                                                List<String> ger_allergies = new ArrayList<>();
+
+                                                missing_information_list.forEach(el -> ger_allergies.add(ht.get(el)));
+                                                updateSetup(ger_allergies.toString(), missing_key);
+
+                                            } else {
+                                                updateSetup(missing_information_list.toString(), missing_key);
+                                            }
                                         }
-
-                                    }else {
-                                        updateSetup(missing_information_list.toString(), missing_key);
-                                    }
-
+                                    }).start();
                                 }
 
                             }else{
@@ -520,7 +540,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSetup(String values, String key){
-        mainTV.setText(values.toString() + " Key; " + key);
 
         final JSONObject config_req = new JSONObject();
 
@@ -532,25 +551,20 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ERROR_THREADRUN","Error in JSONObj Setup: " + e);
 
         }
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    HttpURLConnection con = (HttpURLConnection) (new URL("https://silly-monkey.danielschaefer.me/triggerRouter/setup")).openConnection();
-                    con.setRequestMethod("POST");
-                    con.setDoInput(true);
-                    con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                    con.connect();
-                    con.getOutputStream().write(config_req.toString().getBytes());
-                    Log.d("updateSetup", "HTTP Request Code:" + con.getResponseCode());
-                } catch (Exception e){
-                    Log.d("ERROR_THREADRUN","Error in HTTPRequest: " + e);
 
-                }
+        try {
+            HttpURLConnection con = (HttpURLConnection) (new URL("https://silly-monkey.danielschaefer.me/triggerRouter/setup")).openConnection();
+            con.setRequestMethod("POST");
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            con.connect();
+            con.getOutputStream().write(config_req.toString().getBytes());
+            Log.d("updateSetup", "HTTP Request Code:" + con.getResponseCode());
+        } catch (Exception e){
+            Log.d("ERROR_THREADRUN","Error in HTTPRequest: " + e);
 
-            }
-        }).start();
+        }
 
     }
 
