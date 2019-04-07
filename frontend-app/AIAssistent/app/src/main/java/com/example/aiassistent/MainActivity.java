@@ -129,6 +129,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void initButtonListener(){
 
+        FloatingActionButton delete_setup = findViewById(R.id.delete_setup);
+        delete_setup.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Log.d("BUTTON","Clicked Delete Button");
+                try {
+
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("BTN_DELETE", "Thread Running");
+
+                            try {
+                                HttpURLConnection con = (HttpURLConnection) (new URL("https://silly-monkey.danielschaefer.me/triggerRouter/setup")).openConnection();
+                                con.setRequestMethod("DELETE");
+
+                                if(con.getResponseCode() == 200){
+                                    System.exit(0);
+                                }else {
+                                    mainTV.setText("Failed to reset");
+                                }
+
+                            } catch (Exception ex) {
+                                Log.d("HTTP_ERROR", "Error in HTTPRequest: " + ex);
+                            }
+                        }
+                    }).start();
+                } catch (Exception ex){
+                    Log.d("Button_delete", "Thread, Delete Error" + ex);
+                }
+
+            }
+        });
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,14 +194,8 @@ public class MainActivity extends AppCompatActivity {
 
                             switch (action_call){
                                 case "getPersonalTrainer": {
-                                    String time_value = "now";
-                                    try {
-                                        //time_value = concepts.getJSONArray("time_reference").getJSONObject(0).getString("value");
 
-                                    } catch (Exception ex) {
-
-                                    }
-                                    getPersonalTrainer(time_value);
+                                    getPersonalTrainer("now");
                                     break;
                                 }
                                 case "getWelcome": {
@@ -183,6 +212,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 case "getTraffic": {
                                     getOverview("traffic");
+                                    break;
+                                }
+                                case "getHomeOffice": {
+                                    getHomeOffice();
                                     break;
                                 }
                                 default: {
@@ -299,6 +332,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     };
+
+    private void getHomeOffice(){
+        final JSONObject trigger_reg = new JSONObject();
+
+        try {
+            trigger_reg.put("trigger", new JSONObject()
+                    .put("type", "HomeOffice"));
+        } catch (Exception ex){
+
+        }
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                String resp = makeHTTPRequest(trigger_reg);
+                tts.speak(resp, TextToSpeech.QUEUE_ADD, null);
+            }
+        }).start();
+
+    }
 
     private void setSetup(List<String> missing_key_list){
         if(missing_key_list.size() == 0){
