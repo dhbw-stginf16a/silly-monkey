@@ -20,42 +20,42 @@ function calenderCheck(timeString, startFrom, calendar, freeTime, endTime) {
   for (var i = 0; i < calendar.length; i++) {
     // console.log("Number of appointments today:" + [i+1]);
     if (calendar[i].end > startFrom.valueOf()) {
-      a = i; 
+      a = i;
       // console.log('Found Entry, set a and check for free timeslot... ')
       break;
-    } 
-  } 
+    }
+  }
 
-  // if no entry was found -> free day 
+  // if no entry was found -> free day
   if (a < 0) {
     // console.log('entered 0');
     calendarString = timeString + " you have no appointments. Let me check the weather... ";
     return startFrom.valueOf();
-  } 
+  }
 
-  // search timeslot from found calendar entry 
+  // search timeslot from found calendar entry
   for (var i = a; i < calendar.length; i++) {
     if (calendar[i].start - calendar[a].end >= freeTime) {
         // found entry
         // console.log('entered 1');
         calendarString = "After your appointment " + calendar[a].subject + " there is a timeslot of about an hour before the next meeting starts. Let me check the weather... "
         return calendar[a].end;
-    } 
-    // if entry overlapping, take the end from the longer entry 
+    }
+    // if entry overlapping, take the end from the longer entry
     if (calendar[i].end > calendar[a].end) {
       // console.log('entered 2');
       a = i;
       calendarString = "There is a timeslot of about an hour after your appointment " + calendar[a].subject +  " Let me check the weather... "
-    } 
+    }
   }
-  
+
   // last calendar element
     if (endTime - calendar[a].end >= freeTime){
       // console.log('entered 3');
       calendarString = "After your last appointment " + calendar[a].subject + " you will have enough time to workout. Let me check the weather... ";
       return calendar[a].end;
-  } 
-} 
+  }
+}
 
 function weatherCheck(dayTime, desc, temp) {
   let lookupValue = "rain";
@@ -70,7 +70,7 @@ function weatherCheck(dayTime, desc, temp) {
 
 
 app.get('/whatTraining', async (req, res) => {
-  var calendarString; 
+  var calendarString;
   var weatherString;
   var allergyString;
   var feinstaubString = "";
@@ -80,48 +80,48 @@ app.get('/whatTraining', async (req, res) => {
     calendar.sort(function (a, b){ return a.start - b.start});
     let a = -1;
     var i = 0;
-  
+
     // search for calendar entry that ends after startTime
     for (var i = 0; i < calendar.length; i++) {
       // console.log("Number of appointments today:" + [i+1]);
       if (calendar[i].end > startFrom.valueOf()) {
-        a = i; 
+        a = i;
         // console.log('Found Entry, set a and check for free timeslot... ')
         break;
-      } 
-    } 
-  
-    // if no entry was found -> free day 
+      }
+    }
+
+    // if no entry was found -> free day
     if (a < 0) {
       // console.log('entered 0');
       calendarString = timeString + " you have no appointments. Let me check the weather... ";
       return startFrom.valueOf();
-    } 
-  
-    // search timeslot from found calendar entry 
+    }
+
+    // search timeslot from found calendar entry
     for (var i = a; i < calendar.length; i++) {
       if (calendar[i].start - calendar[a].end >= freeTime) {
           // found entry
           // console.log('entered 1');
           calendarString = "After your appointment " + calendar[a].subject + " there is a timeslot of about an hour before the next meeting starts. Let me check the weather... "
           return calendar[a].end;
-      } 
-      // if entry overlapping, take the end from the longer entry 
+      }
+      // if entry overlapping, take the end from the longer entry
       if (calendar[i].end > calendar[a].end) {
         // console.log('entered 2');
         a = i;
         calendarString = "There is a timeslot of about an hour after your appointment " + calendar[a].subject +  " Let me check the weather... "
-      } 
+      }
     }
-    
+
     // last calendar element
       if (endTime - calendar[a].end >= freeTime){
         // console.log('entered 3');
         calendarString = "After your last appointment " + calendar[a].subject + " you will have enough time to workout. Let me check the weather... ";
         return calendar[a].end;
-    } 
-  } 
-  
+    }
+  }
+
   function weatherCheck(dayTime, desc, temp) {
     let lookupValue = "rain";
     if(desc.toLowerCase().indexOf(lookupValue) === -1) {
@@ -148,13 +148,13 @@ app.get('/whatTraining', async (req, res) => {
         allergyString = "You need not consider sensitive pollen in the air. "
         break
       }
-  
+
       if (isFeinstaubAlarm) {
         feinstaubString = "But be aware that there is a high density of particulates outside. "
         break;
       }
-    } 
-  } 
+    }
+  }
 
   if(req.query.date == "today") {
   var region;
@@ -177,13 +177,13 @@ app.get('/whatTraining', async (req, res) => {
       res.status(500).send({
         "error": "Location Eintrag nicht in der Datenbank"
       })
-    } else 
+    } else
     res.status(500).send({
       "error": error.message
     })
   }
 
-  // Pollen API request according database entries of region and allergies 
+  // Pollen API request according database entries of region and allergies
   const pollenActivityString = (await pollenActivity).data.value.pollen.join(', ');
   const regionOfPollen = (await region).data.value.region;
   var pollenActivityOfThatRegion;
@@ -197,10 +197,10 @@ app.get('/whatTraining', async (req, res) => {
     res.send({
       "error": error.message
     })
-  } 
+  }
 
   var weatherDescription;
-  var weatherTemp; 
+  var weatherTemp;
   var todayNow = new Date(new Date().getTime())
   try {
     weatherHomeNowResponse = await axios.post(weatherAdapter, {
@@ -215,7 +215,7 @@ app.get('/whatTraining', async (req, res) => {
     res.send({
       "error": error.message
     })
-  }     
+  }
 
   var feinstaubResponse;
   try {
@@ -239,17 +239,17 @@ app.get('/whatTraining', async (req, res) => {
 
   /////// Check weather for rain ///////
   weatherCheck("today", weatherDescription, weatherTemp);
-  
+
   /////// Air check (Pollen and Feinstaub)///////
   allergyCheck("today", feinstaubResponse.data.isAlarm);
 
   answerObj = "Alright I will check the conditions of today for you. " + calendarString + weatherString + allergyString + feinstaubString;
-  
+
   /* let controlObject = {
     'pollen' : pollenActivityOfThatRegion.data ,
     'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar , 
-    'location' : locationResponse.data.value.location, 
+    'calender' : checkCalendar ,
+    'location' : locationResponse.data.value.location,
     'Temperature' : weatherTemp,
     'Weather Description' : weatherDescription,
     'time' : todayNow,
@@ -265,7 +265,7 @@ app.get('/whatTraining', async (req, res) => {
     var pollenActivity;
     var locationResponse;
     var regionResponse;
-  
+
     try {
       //get region of pollen
       region = await axios(dbConnectionViaTriggerRouter + "/region");
@@ -280,13 +280,13 @@ app.get('/whatTraining', async (req, res) => {
         res.status(500).send({
           "error": "Location Eintrag nicht in der Datenbank"
         })
-      } else 
+      } else
       res.status(500).send({
         "error": error.message
       })
     }
-  
-    // Pollen API request according database entries of region and allergies 
+
+    // Pollen API request according database entries of region and allergies
     const pollenActivityString = (await pollenActivity).data.value.pollen.join(', ');
     const regionOfPollen = (await region).data.value.region;
     var pollenActivityOfThatRegion;
@@ -300,10 +300,10 @@ app.get('/whatTraining', async (req, res) => {
       res.send({
         "error": error.message
       })
-    } 
+    }
 
     var weatherDescription;
-    var weatherTemp; 
+    var weatherTemp;
     var todayNow = new Date(new Date().getTime())
     var tomorrowFromNow = todayNow.valueOf() + 86400000;
     try {
@@ -319,12 +319,12 @@ app.get('/whatTraining', async (req, res) => {
       res.send({
         "error": error.message
       })
-    }    
+    }
 
     /////// Check calendar for timeslots ///////
     let endTime = new Date(new Date().setHours(23,59,59));
     let freeTime = 3600000;
-    let timeNow = new Date(); 
+    let timeNow = new Date();
     let timeTomorrow = timeNow.valueOf() + 86400000
     //let calendarString;
     let checkCalendar = calendarResponse.data.events;
@@ -335,23 +335,23 @@ app.get('/whatTraining', async (req, res) => {
     weatherCheck("tomorrow", weatherDescription, weatherTemp);
 
     /////// Air check (Pollen and Feinstaub)///////
-    allergyCheck("tomorrow", false); 
-  
+    allergyCheck("tomorrow", false);
+
     var answerObj = "Alright I will check the conditions of tomorrow for you. " + calendarString + weatherString + allergyString;
     res.send({"answer": answerObj});
 
   } else {
-    
+
   res.send({"answer": "Sorry I don't understand."});
   }
-  
+
 })
 
-// triggered every 10 seconds for tests 
+// triggered every 10 seconds for tests
 function startProactive() {
 
   const responsePro = {
-    "use-case": "Personal Trainer", 
+    "use-case": "Personal Trainer",
     "text": ""
   };
 
@@ -360,14 +360,14 @@ function startProactive() {
     try {
       // for Wetter Adapter - "Stuttgart"
       locationResponse = await axios(dbConnectionViaTriggerRouter + "/location");
-      // get calendar object 
+      // get calendar object
       calendarResponse = await axios(calenderAdapter);
     } catch (error) {
     console.log(error)
     }
 
     var weatherDescription;
-    var weatherTemp; 
+    var weatherTemp;
     var todayNow = new Date(new Date().getTime())
     try {
       weatherHomeNowResponse = await axios.post(weatherAdapter, {
@@ -379,7 +379,7 @@ function startProactive() {
       weatherTemp =  weatherHomeNowResponse.data.main.temp;
     } catch (error) {
       console.log(error.message)
-    }     
+    }
 
     /////// Check calendar for timeslots ///////
 
@@ -404,7 +404,7 @@ function startProactive() {
 }
 
 app.listen(port, function () {
-  console.log("PT listening on port: " + port); 
+  console.log("PT listening on port: " + port);
 
   //interval to be changed
   setInterval(startProactive, 10*60*1000);
