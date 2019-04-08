@@ -146,7 +146,6 @@ app.get('/whatTraining', async (req, res) => {
         break;
       } else {
         allergyString = "You need not consider sensitive pollen in the air. "
-        break
       }
 
       if (isFeinstaubAlarm) {
@@ -244,18 +243,6 @@ app.get('/whatTraining', async (req, res) => {
   allergyCheck("today", feinstaubResponse.data.isAlarm);
 
   answerObj = "Alright I will check the conditions of today for you. " + calendarString + weatherString + allergyString + feinstaubString;
-
-  /* let controlObject = {
-    'pollen' : pollenActivityOfThatRegion.data ,
-    'feinstaub' : isFeinstaubAlarm,
-    'calender' : checkCalendar ,
-    'location' : locationResponse.data.value.location,
-    'Temperature' : weatherTemp,
-    'Weather Description' : weatherDescription,
-    'time' : todayNow,
-    'allergies' : allergies
-  };  */
-  //console.log(controlObject);
 
   res.send({"answer": answerObj});
 
