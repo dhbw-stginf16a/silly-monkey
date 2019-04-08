@@ -146,13 +146,11 @@ app.get('/whatTraining', async (req, res) => {
         break;
       } else {
         allergyString = "You need not consider sensitive pollen in the air. "
-        break
+        if (isFeinstaubAlarm) {
+          feinstaubString = "But be aware that there is a high density of particulates outside. "
+        }
       }
 
-      if (isFeinstaubAlarm) {
-        feinstaubString = "But be aware that there is a high density of particulates outside. "
-        break;
-      }
     }
   }
 
