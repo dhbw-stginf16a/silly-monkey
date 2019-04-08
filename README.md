@@ -64,3 +64,16 @@ The containers can reach eachother at their hostname and port: `http://container
 A new microservice has to have a `Dockerfile` and be added to
 `docker-compose.yml`. Please look at the existing containers for how to do
 this.
+
+## Testing
+
+### Unit Tests
+In each of `vs-adapter`, `homeoffice-usecase` run `npm test`.
+
+### Integration Tests
+Tests *all* endpoints and checks whether they return sensible values.
+```
+cd api-test/
+docker build -t sm-api-test .
+docker run --rm sm-api-test
+```
