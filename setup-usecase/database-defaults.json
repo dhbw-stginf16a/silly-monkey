@@ -1,6 +1,6 @@
 {
   "city": "Stuttgart",
-  "allergies": ["Graeser", "Erle"],
+  "pollen": ["Graeser", "Erle"],
   "region": "Hohenlohe/mittlerer Neckar/Oberschwaben",
   "partRegion": "Hohenlohe/mittlerer Neckar/Oberschwaben",
   "favRoads": "[A81, B464]",
