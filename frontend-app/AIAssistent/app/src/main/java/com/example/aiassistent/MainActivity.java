@@ -227,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 }
                                 case "getMissed":{
-                                    getPersonalTrainer("today");                                    break;
+                                    getPersonalTrainer("today");
+                                    break;
                                 }
                                 case "getWelcome": {
                                     getWelcome();
@@ -483,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                                                     updateSetup("Rhein-Main", "region");
                                                 }
 
-                                            } else if(missing_key.equals("allergies")) {
+                                            } else if(missing_key.equals("pollen")) {
                                                 Hashtable<String,String> ht=new Hashtable<String,String>();
                                                 ht.put("alder", "Erle");
                                                 ht.put("ambrosia", "ambrosia");
@@ -497,8 +498,8 @@ public class MainActivity extends AppCompatActivity {
                                                 List<String> ger_allergies = new ArrayList<>();
 
                                                 missing_information_list.forEach(el -> ger_allergies.add(ht.get(el)));
-                                                updateSetup(ger_allergies.toString(), missing_key);
-
+                                                updateSetup(new JSONArray(ger_allergies), missing_key);
+                                                Log.d("SETUP", ger_allergies.toString());
                                             } else {
                                                 updateSetup(missing_information_list.toString(), missing_key);
                                             }
@@ -539,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateSetup(String values, String key){
+    private void updateSetup(Object values, String key){
 
         final JSONObject config_req = new JSONObject();
 
